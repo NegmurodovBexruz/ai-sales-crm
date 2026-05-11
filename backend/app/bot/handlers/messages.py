@@ -1,4 +1,4 @@
-from decimal import Decimal
+﻿from decimal import Decimal
 from urllib.parse import quote, unquote
 
 from aiogram import F, Router
@@ -26,6 +26,7 @@ from app.bot.keyboards import (
 )
 from app.bot.handlers.start import get_telegram_identity
 from app.bot.context import get_telegram_business_id
+from app.bot.i18n import t
 from app.bot.states.order import OrderStates
 from app.core.config import settings
 from app.db.session import SessionLocal
@@ -54,133 +55,6 @@ def has_active_operators(db, business_id: int) -> bool:
         )
     ) is not None
 
-ERROR_FALLBACK_MESSAGES = {
-    "uz_latin": "Hozir javob berishda muammo bo‘ldi. Operator sizga yordam beradi.",
-    "uz_cyrillic": "Ҳозир жавоб беришда муаммо бўлди. Оператор сизга ёрдам беради.",
-    "ru": "Сейчас возникла ошибка при ответе. Оператор вам поможет.",
-}
-
-PHONE_SAVED_MESSAGES = {
-    "uz_latin": "Rahmat, telefon raqamingiz saqlandi.",
-    "uz_cyrillic": "Раҳмат, телефон рақамингиз сақланди.",
-    "ru": "Спасибо, ваш номер телефона сохранён.",
-}
-
-PHONE_SAVED_OPERATOR_MESSAGES = {
-    "uz_latin": "Rahmat, telefon raqamingiz saqlandi. Operator siz bilan bog‘lanadi.",
-    "uz_cyrillic": "Раҳмат, телефон рақамингиз сақланди. Оператор сиз билан боғланади.",
-    "ru": "Спасибо, ваш номер сохранён. Оператор свяжется с вами.",
-}
-
-REQUEST_PHONE_FOR_OPERATOR_MESSAGES = {
-    "uz_latin": "Operatorga yo‘naltirishim uchun telefon raqamingizni yuboring.",
-    "uz_cyrillic": "Операторга йўналтиришим учун телефон рақамингизни юборинг.",
-    "ru": "Чтобы передать вас оператору, отправьте номер телефона.",
-}
-
-INVALID_PHONE_MESSAGES = {
-    "uz_latin": (
-        "Telefon raqam noto‘g‘ri. Iltimos, pastdagi tugma orqali raqam yuboring "
-        "yoki +998901234567 formatida yozing."
-    ),
-    "uz_cyrillic": (
-        "Телефон рақам нотўғри. Илтимос, пастдаги тугма орқали рақам юборинг "
-        "ёки +998901234567 форматида ёзинг."
-    ),
-    "ru": (
-        "Неверный номер телефона. Пожалуйста, отправьте номер через кнопку ниже "
-        "или напишите в формате +998901234567."
-    ),
-}
-
-ORDER_PROMPTS = {
-    "ask_product": {
-        "uz_latin": "Qaysi mahsulotni buyurtma qilmoqchisiz? Mahsulot nomini yozing.",
-        "uz_cyrillic": "Қайси маҳсулотни буюртма қилмоқчисиз? Маҳсулот номини ёзинг.",
-        "ru": "Какой товар хотите заказать? Напишите название товара.",
-    },
-    "out_of_stock": {
-        "uz_latin": "Bu mahsulot hozir omborda yo‘q.",
-        "uz_cyrillic": "Бу маҳсулот ҳозир омборда йўқ.",
-        "ru": "Этого товара сейчас нет в наличии.",
-    },
-    "ask_quantity": {
-        "uz_latin": "Nechta dona buyurtma qilmoqchisiz?",
-        "uz_cyrillic": "Нечта дона буюртма қилмоқчисиз?",
-        "ru": "Сколько штук хотите заказать?",
-    },
-    "invalid_quantity": {
-        "uz_latin": "Noto‘g‘ri son. Iltimos, raqam kiriting.",
-        "uz_cyrillic": "Нотўғри сон. Илтимос, рақам киритинг.",
-        "ru": "Неверное количество. Пожалуйста, введите число.",
-    },
-    "available_quantity": {
-        "uz_latin": "Omborda faqat {stock_count} dona mavjud.",
-        "uz_cyrillic": "Омборда фақат {stock_count} дона мавжуд.",
-        "ru": "В наличии только {stock_count} шт.",
-    },
-    "ask_name_with_default": {
-        "uz_latin": "Buyurtma uchun ismingizni yozing yoki tasdiqlang: {full_name}",
-        "uz_cyrillic": "Буюртма учун исмингизни ёзинг ёки тасдиқланг: {full_name}",
-        "ru": "Напишите имя для заказа или подтвердите: {full_name}",
-    },
-    "ask_name": {
-        "uz_latin": "Buyurtma uchun ismingizni yozing.",
-        "uz_cyrillic": "Буюртма учун исмингизни ёзинг.",
-        "ru": "Напишите имя для заказа.",
-    },
-    "ask_phone_with_default": {
-        "uz_latin": "Telefon raqamingizni tasdiqlang yoki yangi raqam yuboring: {phone}",
-        "uz_cyrillic": "Телефон рақамингизни тасдиқланг ёки янги рақам юборинг: {phone}",
-        "ru": "Подтвердите телефон или отправьте новый номер: {phone}",
-    },
-    "ask_phone": {
-        "uz_latin": "Telefon raqamingizni yuboring.",
-        "uz_cyrillic": "Телефон рақамингизни юборинг.",
-        "ru": "Отправьте номер телефона.",
-    },
-    "ask_address": {
-        "uz_latin": "Yetkazib berish manzilini yozing.",
-        "uz_cyrillic": "Етказиб бериш манзилини ёзинг.",
-        "ru": "Напишите адрес доставки.",
-    },
-    "ask_comment": {
-        "uz_latin": "Izoh bo‘lsa yozing. Bo‘lmasa “yo‘q” deb yozing.",
-        "uz_cyrillic": "Изоҳ бўлса ёзинг. Бўлмаса “йўқ” деб ёзинг.",
-        "ru": "Если есть комментарий, напишите. Если нет — напишите “нет”.",
-    },
-    "created": {
-        "uz_latin": "Buyurtmangiz qabul qilindi. Operator tez orada siz bilan bog‘lanadi.",
-        "uz_cyrillic": "Буюртмангиз қабул қилинди. Оператор тез орада сиз билан боғланади.",
-        "ru": "Ваш заказ принят. Оператор скоро свяжется с вами.",
-    },
-    "cancelled": {
-        "uz_latin": "Buyurtma bekor qilindi.",
-        "uz_cyrillic": "Буюртма бекор қилинди.",
-        "ru": "Заказ отменён.",
-    },
-    "cart_empty_choose_category": {
-        "uz_latin": "Savat bo‘sh qoldi. Kategoriya tanlang yoki buyurtmani bekor qiling.",
-        "uz_cyrillic": "Сават бўш қолди. Категория танланг ёки буюртмани бекор қилинг.",
-        "ru": "Корзина пустая. Выберите категорию или отмените заказ.",
-    },
-    "edit_cart_prompt": {
-        "uz_latin": "Qaysi mahsulotni tahrirlaysiz?",
-        "uz_cyrillic": "Қайси маҳсулотни таҳрирлайсиз?",
-        "ru": "Какой товар изменить?",
-    },
-    "change_quantity_prompt": {
-        "uz_latin": "Yangi sonni kiriting. Mavjud: {stock_count} dona",
-        "uz_cyrillic": "Янги сонни киритинг. Мавжуд: {stock_count} дона",
-        "ru": "Введите новое количество. В наличии: {stock_count}",
-    },
-    "cancel_full_confirm": {
-        "uz_latin": "Buyurtmani to‘liq bekor qilasizmi?",
-        "uz_cyrillic": "Буюртмани тўлиқ бекор қиласизми?",
-        "ru": "Полностью отменить заказ?",
-    },
-}
-
 CONFIRM_WORDS = {
     "ha",
     "ҳа",
@@ -205,100 +79,13 @@ def get_configured_business(db) -> Business | None:
     return db.scalar(select(Business).where(Business.id == settings.DEFAULT_BUSINESS_ID))
 
 
-def invalid_phone_text(language: str) -> str:
-    return INVALID_PHONE_MESSAGES.get(language, INVALID_PHONE_MESSAGES["uz_latin"])
-
-
-def name_confirm_text(language: str, full_name: str) -> str:
-    messages = {
-        "uz_latin": "Buyurtma uchun shu ismni ishlatamizmi?\n\nIsm: {full_name}",
-        "uz_cyrillic": "Буюртма учун шу исмни ишлатамизми?\n\nИсм: {full_name}",
-        "ru": "Используем это имя для заказа?\n\nИмя: {full_name}",
-    }
-    return messages.get(language, messages["uz_latin"]).format(full_name=full_name)
-
-
-def phone_confirm_text(language: str, phone: str) -> str:
-    messages = {
-        "uz_latin": "Buyurtma uchun shu telefon raqamni ishlatamizmi?\n\nTelefon: {phone}",
-        "uz_cyrillic": "Буюртма учун шу телефон рақамни ишлатамизми?\n\nТелефон: {phone}",
-        "ru": "Используем этот номер телефона для заказа?\n\nТелефон: {phone}",
-    }
-    return messages.get(language, messages["uz_latin"]).format(phone=phone)
-
-
 def is_valid_order_name(name: str) -> bool:
     normalized = name.strip()
     return len(normalized) >= 2 and not normalized.isdigit()
 
 
-def text_for(key: str, language: str, **kwargs) -> str:
-    template = ORDER_PROMPTS[key].get(language, ORDER_PROMPTS[key]["uz_latin"])
-    return template.format(**kwargs)
-
-
-def order_text(key: str, language: str, **kwargs) -> str:
-    messages = {
-        "choose_category": {
-            "uz_latin": "Kategoriya tanlang:",
-            "uz_cyrillic": "Категория танланг:",
-            "ru": "Выберите категорию:",
-        },
-        "choose_product": {
-            "uz_latin": "Mahsulot tanlang:",
-            "uz_cyrillic": "Маҳсулот танланг:",
-            "ru": "Выберите товар:",
-        },
-        "ask_quantity_with_stock": {
-            "uz_latin": "Nechta dona buyurtma qilmoqchisiz? Mavjud: {stock_count} dona",
-            "uz_cyrillic": "Нечта дона буюртма қилмоқчисиз? Мавжуд: {stock_count} дона",
-            "ru": "Сколько штук хотите заказать? В наличии: {stock_count}",
-        },
-        "cart_added": {
-            "uz_latin": "Savatga qo‘shildi:\n{product_name} x {quantity} = {total_price} so‘m\n\nYana boshqa mahsulot buyurtma qilmoqchimisiz?",
-            "uz_cyrillic": "Саватга қўшилди:\n{product_name} x {quantity} = {total_price} сўм\n\nЯна бошқа маҳсулот буюртма қилмоқчимисиз?",
-            "ru": "Добавлено в корзину:\n{product_name} x {quantity} = {total_price} сум\n\nХотите добавить ещё товар?",
-        },
-        "cancelled": {
-            "uz_latin": "Buyurtma bekor qilindi.",
-            "uz_cyrillic": "Буюртма бекор қилинди.",
-            "ru": "Заказ отменён.",
-        },
-    }
-    template = messages[key].get(language, messages[key]["uz_latin"])
-    return template.format(**kwargs)
-
-
 def format_sum(value: Decimal | int | str) -> str:
     return f"{int(Decimal(str(value))):,}".replace(",", " ")
-
-
-def cart_review_text(cart: list[dict], language: str) -> str:
-    total_price = sum(Decimal(str(item["total_price"])) for item in cart)
-    currency = cart_item_currency(customer.language)
-    product_lines = "\n".join(
-        f"{index}. {item['product_name']} x {item['quantity']} = {format_sum(item['total_price'])} {currency}"
-        for index, item in enumerate(cart, start=1)
-    )
-    labels = {
-        "uz_latin": (
-            "Savatdagi mahsulotlar:\n{product_lines}\n\n"
-            "Jami: {total_price} so‘m\n\n"
-            "Yana boshqa mahsulot buyurtma qilmoqchimisiz?"
-        ),
-        "uz_cyrillic": (
-            "Саватдаги маҳсулотлар:\n{product_lines}\n\n"
-            "Жами: {total_price} сўм\n\n"
-            "Яна бошқа маҳсулот буюртма қилмоқчимисиз?"
-        ),
-        "ru": (
-            "Товары в корзине:\n{product_lines}\n\n"
-            "Итого: {total_price} сум\n\n"
-            "Хотите добавить ещё товар?"
-        ),
-    }
-    template = labels.get(language, labels["uz_latin"])
-    return template.format(product_lines=product_lines, total_price=format_sum(total_price))
 
 
 async def show_cart_review(message_or_callback, state: FSMContext, language: str) -> None:
@@ -343,14 +130,6 @@ def get_available_products_for_category(db, business_id: int, category: str | No
     return list(db.scalars(query.order_by(Product.name.asc())).all())
 
 
-def product_button_rows(products: list[Product]) -> list[tuple[str, int]]:
-    rows = []
-    for product in products:
-        suffix = " · kam qoldi" if 1 <= product.stock_count <= 10 else ""
-        rows.append((f"{product.name} — {format_sum(product_final_price(product))} so‘m{suffix}", product.id))
-    return rows
-
-
 async def show_categories(message, state: FSMContext, db, business: Business, customer: Customer) -> None:
     categories = get_available_categories(db, business.id)
     await state.update_data(business_id=business.id, customer_id=customer.id)
@@ -375,11 +154,7 @@ async def show_products_for_category(message, state: FSMContext, db, business: B
 
 
 def cart_item_currency(language: str) -> str:
-    if language == "ru":
-        return "сум"
-    if language == "uz_cyrillic":
-        return "сўм"
-    return "so‘m"
+    return t(language, "currency")
 
 
 def cart_review_text(cart: list[dict], language: str) -> str:
@@ -389,65 +164,73 @@ def cart_review_text(cart: list[dict], language: str) -> str:
         f"{index}. {item['product_name']} x {item['quantity']} = {format_sum(item['total_price'])} {currency}"
         for index, item in enumerate(cart, start=1)
     )
-    labels = {
-        "uz_latin": "Savatdagi mahsulotlar:\n\n{product_lines}\n\nJami: {total_price} so‘m\n\nNima qilamiz?",
-        "uz_cyrillic": "Саватдаги маҳсулотлар:\n\n{product_lines}\n\nЖами: {total_price} сўм\n\nНима қиламиз?",
-        "ru": "Товары в корзине:\n\n{product_lines}\n\nИтого: {total_price} сум\n\nЧто делаем?",
-    }
-    return labels.get(language, labels["uz_latin"]).format(
-        product_lines=product_lines,
-        total_price=format_sum(total_price),
-    )
+    return t(language, "cart_review", product_lines=product_lines, total_price=format_sum(total_price))
 
 
 def product_button_rows(products: list[Product], language: str = "uz_latin") -> list[tuple[str, int]]:
-    low_stock_text = {
-        "uz_latin": "kam qoldi",
-        "uz_cyrillic": "кам қолди",
-        "ru": "мало осталось",
-    }.get(language, "kam qoldi")
+    low_stock_text = t(language, "low_stock_suffix")
     currency = cart_item_currency(language)
     rows = []
     for product in products:
         suffix = f" · {low_stock_text}" if 1 <= product.stock_count <= 10 else ""
-        rows.append((f"{product.name} — {format_sum(product_final_price(product))} {currency}{suffix}", product.id))
+        rows.append((f"{product.name} - {format_sum(product_final_price(product))} {currency}{suffix}", product.id))
     return rows
 
 
 def order_text(key: str, language: str, **kwargs) -> str:
-    messages = {
-        "choose_category": {
-            "uz_latin": "Kategoriya tanlang:",
-            "uz_cyrillic": "Категория танланг:",
-            "ru": "Выберите категорию:",
-        },
-        "choose_product": {
-            "uz_latin": "Mahsulot tanlang:",
-            "uz_cyrillic": "Маҳсулот танланг:",
-            "ru": "Выберите товар:",
-        },
-        "ask_quantity_with_stock": {
-            "uz_latin": "Nechta dona buyurtma qilmoqchisiz? Mavjud: {stock_count} dona",
-            "uz_cyrillic": "Нечта дона буюртма қилмоқчисиз? Мавжуд: {stock_count} дона",
-            "ru": "Сколько штук хотите заказать? В наличии: {stock_count}",
-        },
-        "cancelled": {
-            "uz_latin": "Buyurtma bekor qilindi.",
-            "uz_cyrillic": "Буюртма бекор қилинди.",
-            "ru": "Заказ отменён.",
-        },
-    }
-    template = messages[key].get(language, messages[key]["uz_latin"])
-    return template.format(**kwargs)
+    return t(language, key, **kwargs)
 
 
 def cart_item_detail_text(item: dict, language: str) -> str:
-    labels = {
-        "uz_latin": "{product_name}\nHozirgi soni: {quantity}\nNima qilamiz?",
-        "uz_cyrillic": "{product_name}\nҲозирги сони: {quantity}\nНима қиламиз?",
-        "ru": "{product_name}\nТекущее количество: {quantity}\nЧто делаем?",
-    }
-    return labels.get(language, labels["uz_latin"]).format(**item)
+    return t(language, "cart_item_detail", **item)
+
+
+def invalid_phone_text(language: str) -> str:
+    return t(language, "invalid_phone")
+
+
+def name_confirm_text(language: str, full_name: str) -> str:
+    return t(language, "name_confirm", full_name=full_name)
+
+
+def phone_confirm_text(language: str, phone: str) -> str:
+    return t(language, "phone_confirm", phone=phone)
+
+
+def text_for(key: str, language: str, **kwargs) -> str:
+    return t(language, key, **kwargs)
+
+
+def order_text(key: str, language: str, **kwargs) -> str:
+    return t(language, key, **kwargs)
+
+
+def cart_item_currency(language: str) -> str:
+    return t(language, "currency")
+
+
+def cart_review_text(cart: list[dict], language: str) -> str:
+    total_price = sum(Decimal(str(item["total_price"])) for item in cart)
+    currency = cart_item_currency(language)
+    product_lines = "\n".join(
+        f"{index}. {item['product_name']} x {item['quantity']} = {format_sum(item['total_price'])} {currency}"
+        for index, item in enumerate(cart, start=1)
+    )
+    return t(language, "cart_review", product_lines=product_lines, total_price=format_sum(total_price))
+
+
+def product_button_rows(products: list[Product], language: str = "uz_latin") -> list[tuple[str, int]]:
+    low_stock_text = t(language, "low_stock_suffix")
+    currency = cart_item_currency(language)
+    rows = []
+    for product in products:
+        suffix = f" · {low_stock_text}" if 1 <= product.stock_count <= 10 else ""
+        rows.append((f"{product.name} - {format_sum(product_final_price(product))} {currency}{suffix}", product.id))
+    return rows
+
+
+def cart_item_detail_text(item: dict, language: str) -> str:
+    return t(language, "cart_item_detail", **item)
 
 
 async def show_edit_cart(callback: CallbackQuery, state: FSMContext, language: str) -> None:
@@ -598,95 +381,22 @@ async def show_order_confirmation(message: Message, state: FSMContext, db, custo
         return
 
     total_price = sum(Decimal(str(item["total_price"])) for item in cart)
+    currency = cart_item_currency(customer.language)
     product_lines = "\n".join(
-        f"{index}. {item['product_name']} x {item['quantity']} = {format_sum(item['total_price'])} so‘m"
+        f"{index}. {item['product_name']} x {item['quantity']} = {format_sum(item['total_price'])} {currency}"
         for index, item in enumerate(cart, start=1)
     )
-    comment = data.get("comment")
-    comment_text = comment if comment else "-"
-
-    labels = {
-        "uz_latin": (
-            "Buyurtmani tasdiqlang:\n"
-            "Mahsulot: {product_name}\n"
-            "Soni: {quantity}\n"
-            "Narx: {unit_price}\n"
-            "Jami: {total_price}\n"
-            "Ism: {customer_name}\n"
-            "Telefon: {phone}\n"
-            "Manzil: {address}\n"
-            "Izoh: {comment}\n\n"
-            "Tasdiqlaysizmi?"
-        ),
-        "uz_cyrillic": (
-            "Буюртмани тасдиқланг:\n"
-            "Маҳсулот: {product_name}\n"
-            "Сони: {quantity}\n"
-            "Нарх: {unit_price}\n"
-            "Жами: {total_price}\n"
-            "Исм: {customer_name}\n"
-            "Телефон: {phone}\n"
-            "Манзил: {address}\n"
-            "Изоҳ: {comment}\n\n"
-            "Тасдиқлайсизми?"
-        ),
-        "ru": (
-            "Подтвердите заказ:\n"
-            "Товар: {product_name}\n"
-            "Количество: {quantity}\n"
-            "Цена: {unit_price}\n"
-            "Итого: {total_price}\n"
-            "Имя: {customer_name}\n"
-            "Телефон: {phone}\n"
-            "Адрес: {address}\n"
-            "Комментарий: {comment}\n\n"
-            "Подтверждаете?"
-        ),
-    }
-    summary = labels.get(customer.language, labels["uz_latin"]).format(
-        product_name="",
-        quantity="",
-        unit_price="",
+    comment = data.get("comment") or "-"
+    summary = t(
+        customer.language,
+        "order_confirmation",
         product_lines=product_lines,
         total_price=format_sum(total_price),
         customer_name=data["customer_name"],
         phone=data["phone"],
         address=data["address"],
-        comment=comment_text,
+        comment=comment,
     )
-    if customer.language == "uz_latin":
-        summary = (
-            "Buyurtmani tasdiqlang:\n\n"
-            f"Mahsulotlar:\n{product_lines}\n\n"
-            f"Jami: {format_sum(total_price)} so‘m\n\n"
-            f"Ism: {data['customer_name']}\n"
-            f"Telefon: {data['phone']}\n"
-            f"Manzil: {data['address']}\n"
-            f"Izoh: {comment_text}\n\n"
-            "Tasdiqlaysizmi?"
-        )
-    elif customer.language == "ru":
-        summary = (
-            "Подтвердите заказ:\n\n"
-            f"Товары:\n{product_lines}\n\n"
-            f"Итого: {format_sum(total_price)} сум\n\n"
-            f"Имя: {data['customer_name']}\n"
-            f"Телефон: {data['phone']}\n"
-            f"Адрес: {data['address']}\n"
-            f"Комментарий: {comment_text}\n\n"
-            "Подтверждаете?"
-        )
-    else:
-        summary = (
-            "Буюртмани тасдиқланг:\n\n"
-            f"Маҳсулотлар:\n{product_lines}\n\n"
-            f"Жами: {format_sum(total_price)} сўм\n\n"
-            f"Исм: {data['customer_name']}\n"
-            f"Телефон: {data['phone']}\n"
-            f"Манзил: {data['address']}\n"
-            f"Изоҳ: {comment_text}\n\n"
-            "Тасдиқлайсизми?"
-        )
     await state.update_data(total_price=str(total_price))
     await state.set_state(OrderStates.confirmation)
     await message.answer(summary, reply_markup=order_confirmation_keyboard(customer.language))
@@ -819,11 +529,11 @@ async def notify_admin_order(message: Message, customer: Customer, business_id: 
     order_items = list(getattr(order, "items", []) or [])
     if order_items:
         product_lines = "\n".join(
-            f"{index}. {item.product_name} x {item.quantity} — {format_sum(item.total_price)} so‘m"
+            f"{index}. {item.product_name} x {item.quantity} - {format_sum(item.total_price)} so‘m"
             for index, item in enumerate(order_items, start=1)
         )
     elif product is not None:
-        product_lines = f"1. {product.name} x {order.quantity} — {format_sum(order.total_price)} so‘m"
+        product_lines = f"1. {product.name} x {order.quantity} - {format_sum(order.total_price)} so‘m"
     else:
         product_lines = "-"
     admin_message = (
@@ -871,7 +581,7 @@ async def start_generic_order_from_button(callback: CallbackQuery, state: FSMCon
     try:
         business = get_configured_business(db)
         if business is None:
-            await callback.message.answer("Bot setup is not ready yet. Please create a business first.")
+            await callback.message.answer(t("uz_latin", "setup_not_ready"))
             await callback.answer()
             return
 
@@ -890,7 +600,7 @@ async def start_order_from_button(callback: CallbackQuery, state: FSMContext) ->
     try:
         business = get_configured_business(db)
         if business is None:
-            await callback.message.answer("Bot setup is not ready yet. Please create a business first.")
+            await callback.message.answer(t("uz_latin", "setup_not_ready"))
             await callback.answer()
             return
 
@@ -904,24 +614,17 @@ async def start_order_from_button(callback: CallbackQuery, state: FSMContext) ->
         try:
             product_id = int((callback.data or "").split(":", 1)[1])
         except (IndexError, ValueError):
-            await callback.answer("Invalid product", show_alert=True)
+            await callback.answer(t("uz_latin", "invalid_product"), show_alert=True)
             return
 
         telegram_user_id, full_name, username = get_telegram_identity(callback)
         customer = get_or_create_telegram_customer(db, business.id, telegram_user_id, full_name, username)
         product = db.scalar(select(Product).where(Product.id == product_id, Product.business_id == business.id))
         if product is None:
-            await callback.answer("Product not found", show_alert=True)
+            await callback.answer(t(customer.language, "product_not_found"), show_alert=True)
             return
         if product.stock_count <= 0:
-            unavailable_messages = {
-                "uz_latin": "Kechirasiz, bu mahsulot hozir qolmagan.",
-                "uz_cyrillic": "Кечирасиз, бу маҳсулот ҳозир қолмаган.",
-                "ru": "Извините, этого товара сейчас нет в наличии.",
-            }
-            await callback.message.answer(
-                unavailable_messages.get(customer.language, unavailable_messages["uz_latin"])
-            )
+            await callback.message.answer(t(customer.language, "out_of_stock"))
             await callback.answer()
             return
 
@@ -978,7 +681,7 @@ async def choose_order_category(callback: CallbackQuery, state: FSMContext) -> N
     try:
         business = get_configured_business(db)
         if business is None:
-            await callback.answer("Business is not configured", show_alert=True)
+            await callback.answer(t("uz_latin", "business_not_configured"), show_alert=True)
             return
         telegram_user_id, full_name, username = get_telegram_identity(callback)
         customer = get_or_create_telegram_customer(db, business.id, telegram_user_id, full_name, username)
@@ -995,7 +698,7 @@ async def back_to_order_categories(callback: CallbackQuery, state: FSMContext) -
     try:
         business = get_configured_business(db)
         if business is None:
-            await callback.answer("Business is not configured", show_alert=True)
+            await callback.answer(t("uz_latin", "business_not_configured"), show_alert=True)
             return
         telegram_user_id, full_name, username = get_telegram_identity(callback)
         customer = get_or_create_telegram_customer(db, business.id, telegram_user_id, full_name, username)
@@ -1011,18 +714,18 @@ async def choose_order_product(callback: CallbackQuery, state: FSMContext) -> No
     try:
         business = get_configured_business(db)
         if business is None:
-            await callback.answer("Business is not configured", show_alert=True)
+            await callback.answer(t("uz_latin", "business_not_configured"), show_alert=True)
             return
         try:
             product_id = int((callback.data or "").split(":", 1)[1])
         except (IndexError, ValueError):
-            await callback.answer("Invalid product", show_alert=True)
+            await callback.answer(t("uz_latin", "invalid_product"), show_alert=True)
             return
         telegram_user_id, full_name, username = get_telegram_identity(callback)
         customer = get_or_create_telegram_customer(db, business.id, telegram_user_id, full_name, username)
         product = db.scalar(select(Product).where(Product.id == product_id, Product.business_id == business.id))
         if product is None or product.stock_count <= 0:
-            await callback.answer("Product is unavailable", show_alert=True)
+            await callback.answer(t(customer.language, "product_unavailable"), show_alert=True)
             return
         await ask_quantity(callback.message, state, customer, product)
         await callback.answer()
@@ -1036,7 +739,7 @@ async def order_add_more(callback: CallbackQuery, state: FSMContext) -> None:
     try:
         business = get_configured_business(db)
         if business is None:
-            await callback.answer("Business is not configured", show_alert=True)
+            await callback.answer(t("uz_latin", "business_not_configured"), show_alert=True)
             return
         telegram_user_id, full_name, username = get_telegram_identity(callback)
         customer = get_or_create_telegram_customer(db, business.id, telegram_user_id, full_name, username)
@@ -1091,7 +794,7 @@ async def order_edit_item(callback: CallbackQuery, state: FSMContext) -> None:
         try:
             product_id = int((callback.data or "").split(":", 1)[1])
         except (IndexError, ValueError):
-            await callback.answer("Invalid product", show_alert=True)
+            await callback.answer(t(language, "invalid_product"), show_alert=True)
             return
         data = await state.get_data()
         item = next((item for item in data.get("cart", []) if int(item["product_id"]) == product_id), None)
@@ -1115,18 +818,18 @@ async def order_change_qty(callback: CallbackQuery, state: FSMContext) -> None:
     try:
         business = get_configured_business(db)
         if business is None:
-            await callback.answer("Business is not configured", show_alert=True)
+            await callback.answer(t("uz_latin", "business_not_configured"), show_alert=True)
             return
         telegram_user_id, full_name, username = get_telegram_identity(callback)
         customer = get_or_create_telegram_customer(db, business.id, telegram_user_id, full_name, username)
         try:
             product_id = int((callback.data or "").split(":", 1)[1])
         except (IndexError, ValueError):
-            await callback.answer("Invalid product", show_alert=True)
+            await callback.answer(t(customer.language, "invalid_product"), show_alert=True)
             return
         product = db.scalar(select(Product).where(Product.id == product_id, Product.business_id == business.id))
         if product is None:
-            await callback.answer("Product not found", show_alert=True)
+            await callback.answer(t(customer.language, "product_not_found"), show_alert=True)
             return
         await state.update_data(editing_product_id=product_id)
         await state.set_state(OrderStates.editing_item_quantity)
@@ -1144,14 +847,14 @@ async def order_remove_item(callback: CallbackQuery, state: FSMContext) -> None:
     try:
         business = get_configured_business(db)
         if business is None:
-            await callback.answer("Business is not configured", show_alert=True)
+            await callback.answer(t("uz_latin", "business_not_configured"), show_alert=True)
             return
         telegram_user_id, full_name, username = get_telegram_identity(callback)
         customer = get_or_create_telegram_customer(db, business.id, telegram_user_id, full_name, username)
         try:
             product_id = int((callback.data or "").split(":", 1)[1])
         except (IndexError, ValueError):
-            await callback.answer("Invalid product", show_alert=True)
+            await callback.answer(t(customer.language, "invalid_product"), show_alert=True)
             return
         data = await state.get_data()
         cart = [item for item in data.get("cart", []) if int(item["product_id"]) != product_id]
@@ -1189,7 +892,7 @@ async def order_finish_items(callback: CallbackQuery, state: FSMContext) -> None
     try:
         business = get_configured_business(db)
         if business is None:
-            await callback.answer("Business is not configured", show_alert=True)
+            await callback.answer(t("uz_latin", "business_not_configured"), show_alert=True)
             return
         telegram_user_id, full_name, username = get_telegram_identity(callback)
         customer = get_or_create_telegram_customer(db, business.id, telegram_user_id, full_name, username)
@@ -1212,7 +915,7 @@ async def use_existing_order_name(callback: CallbackQuery, state: FSMContext) ->
         business = get_configured_business(db)
         if business is None:
             await state.clear()
-            await callback.message.answer("Bot setup is not ready yet. Please create a business first.")
+            await callback.message.answer(t("uz_latin", "setup_not_ready"))
             await callback.answer()
             return
 
@@ -1254,7 +957,7 @@ async def use_existing_order_phone(callback: CallbackQuery, state: FSMContext) -
         business = get_configured_business(db)
         if business is None:
             await state.clear()
-            await callback.message.answer("Bot setup is not ready yet. Please create a business first.")
+            await callback.message.answer(t("uz_latin", "setup_not_ready"))
             await callback.answer()
             return
 
@@ -1322,7 +1025,7 @@ async def handle_order_product(message: Message, state: FSMContext) -> None:
         business = get_configured_business(db)
         if business is None:
             await state.clear()
-            await message.answer("Bot setup is not ready yet. Please create a business first.")
+            await message.answer(t("uz_latin", "setup_not_ready"))
             return
 
         telegram_user_id, full_name, username = get_telegram_identity(message)
@@ -1347,7 +1050,7 @@ async def handle_order_quantity(message: Message, state: FSMContext) -> None:
         business = get_configured_business(db)
         if business is None:
             await state.clear()
-            await message.answer("Bot setup is not ready yet. Please create a business first.")
+            await message.answer(t("uz_latin", "setup_not_ready"))
             return
 
         telegram_user_id, full_name, username = get_telegram_identity(message)
@@ -1415,7 +1118,7 @@ async def handle_edit_item_quantity(message: Message, state: FSMContext) -> None
         business = get_configured_business(db)
         if business is None:
             await state.clear()
-            await message.answer("Bot setup is not ready yet. Please create a business first.")
+            await message.answer(t("uz_latin", "setup_not_ready"))
             return
 
         telegram_user_id, full_name, username = get_telegram_identity(message)
@@ -1466,7 +1169,7 @@ async def handle_order_name(message: Message, state: FSMContext) -> None:
         business = get_configured_business(db)
         if business is None:
             await state.clear()
-            await message.answer("Bot setup is not ready yet. Please create a business first.")
+            await message.answer(t("uz_latin", "setup_not_ready"))
             return
 
         telegram_user_id, full_name, username = get_telegram_identity(message)
@@ -1492,14 +1195,14 @@ async def handle_order_phone_contact(message: Message, state: FSMContext) -> Non
         business = get_configured_business(db)
         if business is None:
             await state.clear()
-            await message.answer("Bot setup is not ready yet. Please create a business first.")
+            await message.answer(t("uz_latin", "setup_not_ready"))
             return
 
         telegram_user_id, full_name, username = get_telegram_identity(message)
         customer = get_or_create_telegram_customer(db, business.id, telegram_user_id, full_name, username)
         contact = message.contact
         if contact is None or contact.user_id != message.from_user.id:
-            await message.answer("Iltimos, o‘zingizning telefon raqamingizni yuboring.")
+            await message.answer(t(customer.language, "own_contact_required"))
             return
 
         normalized_phone = normalize_uz_phone(contact.phone_number)
@@ -1531,7 +1234,7 @@ async def handle_order_phone_text(message: Message, state: FSMContext) -> None:
         business = get_configured_business(db)
         if business is None:
             await state.clear()
-            await message.answer("Bot setup is not ready yet. Please create a business first.")
+            await message.answer(t("uz_latin", "setup_not_ready"))
             return
 
         telegram_user_id, full_name, username = get_telegram_identity(message)
@@ -1560,7 +1263,7 @@ async def handle_order_address(message: Message, state: FSMContext) -> None:
         business = get_configured_business(db)
         if business is None:
             await state.clear()
-            await message.answer("Bot setup is not ready yet. Please create a business first.")
+            await message.answer(t("uz_latin", "setup_not_ready"))
             return
 
         telegram_user_id, full_name, username = get_telegram_identity(message)
@@ -1583,7 +1286,7 @@ async def handle_order_comment(message: Message, state: FSMContext) -> None:
         business = get_configured_business(db)
         if business is None:
             await state.clear()
-            await message.answer("Bot setup is not ready yet. Please create a business first.")
+            await message.answer(t("uz_latin", "setup_not_ready"))
             return
 
         telegram_user_id, full_name, username = get_telegram_identity(message)
@@ -1624,7 +1327,7 @@ async def confirm_order(callback: CallbackQuery, state: FSMContext) -> None:
         business = get_configured_business(db)
         if business is None:
             await state.clear()
-            await callback.message.answer("Bot setup is not ready yet. Please create a business first.")
+            await callback.message.answer(t("uz_latin", "setup_not_ready"))
             await callback.answer()
             return
 
@@ -1673,7 +1376,7 @@ async def handle_contact_message(message: Message) -> None:
     try:
         business = get_configured_business(db)
         if business is None:
-            await message.answer("Bot setup is not ready yet. Please create a business first.")
+            await message.answer(t("uz_latin", "setup_not_ready"))
             return
 
         telegram_user_id, full_name, username = get_telegram_identity(message)
@@ -1687,7 +1390,7 @@ async def handle_contact_message(message: Message) -> None:
 
         contact = message.contact
         if contact is None or contact.user_id != message.from_user.id:
-            await message.answer("Iltimos, o‘zingizning telefon raqamingizni yuboring.")
+            await message.answer(t(customer.language, "own_contact_required"))
             return
 
         normalized_phone = normalize_uz_phone(contact.phone_number)
@@ -1721,17 +1424,10 @@ async def handle_contact_message(message: Message) -> None:
             if notification_sent:
                 clear_pending_operator_context(db, customer)
 
-            await message.answer(
-                PHONE_SAVED_OPERATOR_MESSAGES.get(
-                    customer.language,
-                    PHONE_SAVED_OPERATOR_MESSAGES["uz_latin"],
-                ),
-            )
+            await message.answer(t(customer.language, "phone_saved_operator"))
             return
 
-        await message.answer(
-            PHONE_SAVED_MESSAGES.get(customer.language, PHONE_SAVED_MESSAGES["uz_latin"]),
-        )
+        await message.answer(t(customer.language, "phone_saved"))
     finally:
         db.close()
 
@@ -1742,7 +1438,7 @@ async def handle_text_message(message: Message, state: FSMContext) -> None:
     try:
         business = get_configured_business(db)
         if business is None:
-            await message.answer("Bot setup is not ready yet. Please create a business first.")
+            await message.answer(t("uz_latin", "setup_not_ready"))
             return
 
         customer_message = message.text or ""
@@ -1786,12 +1482,7 @@ async def handle_text_message(message: Message, state: FSMContext) -> None:
             )
             if notification_sent:
                 clear_pending_operator_context(db, customer)
-            await message.answer(
-                PHONE_SAVED_OPERATOR_MESSAGES.get(
-                    customer.language,
-                    PHONE_SAVED_OPERATOR_MESSAGES["uz_latin"],
-                ),
-            )
+            await message.answer(t(customer.language, "phone_saved_operator"))
             return
 
         save_conversation_message(
@@ -1816,10 +1507,7 @@ async def handle_text_message(message: Message, state: FSMContext) -> None:
             except Exception:
                 pass
 
-            response_text = ERROR_FALLBACK_MESSAGES.get(
-                customer.language,
-                ERROR_FALLBACK_MESSAGES["uz_latin"],
-            )
+            response_text = t(customer.language, "error_fallback")
             try:
                 save_ai_error_log(
                     db=db,
@@ -1854,10 +1542,7 @@ async def handle_text_message(message: Message, state: FSMContext) -> None:
                     confidence=0.0,
                 )
                 await message.answer(
-                    REQUEST_PHONE_FOR_OPERATOR_MESSAGES.get(
-                        customer.language,
-                        REQUEST_PHONE_FOR_OPERATOR_MESSAGES["uz_latin"],
-                    ),
+                    t(customer.language, "request_phone_for_operator"),
                     reply_markup=contact_request_keyboard(customer.language),
                 )
             return
@@ -1908,11 +1593,10 @@ async def handle_text_message(message: Message, state: FSMContext) -> None:
                     confidence=confidence,
                 )
                 await message.answer(
-                    REQUEST_PHONE_FOR_OPERATOR_MESSAGES.get(
-                        customer.language,
-                        REQUEST_PHONE_FOR_OPERATOR_MESSAGES["uz_latin"],
-                    ),
+                    t(customer.language, "request_phone_for_operator"),
                     reply_markup=contact_request_keyboard(customer.language),
                 )
     finally:
         db.close()
+
+

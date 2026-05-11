@@ -1,4 +1,4 @@
-import os
+﻿import os
 import sys
 from pathlib import Path
 
@@ -6,19 +6,19 @@ from sqlalchemy import select
 
 ROOT_DIR = Path(__file__).resolve().parents[1]
 BACKEND_DIR = ROOT_DIR / "backend"
-sys.path.insert(0, str(ROOT_DIR))
+sys.path.insert(0, str(ROOT_DIR / "backend"))
 
-from backend.app.api.routes.auth import login, register
-from backend.app.api.routes.businesses import create_business
-from backend.app.api.routes.conversations import create_conversation, get_customer_conversation_history
-from backend.app.api.routes.customers import list_customers
-from backend.app.db.session import SessionLocal
-from backend.app.models.business import Business
-from backend.app.models.user import User
-from backend.app.schemas.auth import UserLogin, UserRegister
-from backend.app.schemas.business import BusinessCreate
-from backend.app.schemas.conversation import ConversationCreate
-from backend.app.services.customer_service import get_or_create_telegram_customer
+from app.api.routes.auth import login_json, register
+from app.api.routes.businesses import create_business
+from app.api.routes.conversations import create_conversation, get_customer_conversation_history
+from app.api.routes.customers import list_customers
+from app.db.session import SessionLocal
+from app.models.business import Business
+from app.models.user import User
+from app.schemas.auth import UserLogin, UserRegister
+from app.schemas.business import BusinessCreate
+from app.schemas.conversation import ConversationCreate
+from app.services.customer_service import get_or_create_telegram_customer
 
 
 TEST_EMAIL = os.getenv("TEST_EMAIL", "test-owner@example.com")
@@ -35,7 +35,7 @@ def main() -> None:
                 db,
             )
 
-        token = login(UserLogin(email=TEST_EMAIL, password=TEST_PASSWORD), db)
+        token = login_json(UserLogin(email=TEST_EMAIL, password=TEST_PASSWORD), db)
         if not token.access_token:
             raise RuntimeError("Login failed")
 
@@ -97,3 +97,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+

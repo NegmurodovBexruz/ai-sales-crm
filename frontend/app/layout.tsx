@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "AI Sales CRM",
-  description: "Business owner dashboard for AI Sales CRM"
+  description: "AI Sales CRM biznes boshqaruv paneli"
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

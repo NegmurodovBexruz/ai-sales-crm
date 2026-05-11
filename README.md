@@ -245,3 +245,73 @@ ai-sales-crm/
     make_super_admin.py
     backfill_business_codes.py
     test_*.py
+```
+
+---
+
+## Local Setup
+
+Backend:
+
+```bash
+cd backend
+pip install -r requirements.txt
+alembic upgrade head
+uvicorn app.main:app --reload --port 8000
+```
+
+Frontend:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Frontend uses only `NEXT_PUBLIC_API_URL` for the backend URL.
+
+## Backend Env
+
+Required or commonly used backend variables:
+
+- `APP_ENV`
+- `APP_DEBUG`
+- `DATABASE_URL`
+- `JWT_SECRET_KEY`
+- `JWT_ALGORITHM`
+- `ACCESS_TOKEN_EXPIRE_MINUTES`
+- `AI_PROVIDER`
+- `GEMINI_API_KEY`
+- `GEMINI_MODEL`
+- `OPENAI_API_KEY`
+- `OPENAI_MODEL`
+- `TELEGRAM_ADMIN_CHAT_ID`
+- `BACKEND_URL`
+- `FRONTEND_URL`
+
+Development-only fallback variables:
+
+- `TELEGRAM_BOT_TOKEN`
+- `DEFAULT_BUSINESS_ID`
+
+Production Telegram webhooks use per-business bot tokens stored in the database and the route:
+
+```text
+POST /api/telegram/webhook/{public_business_id}
+```
+
+## Deployment
+
+Render backend:
+
+- Root Directory: `backend`
+- Build Command: `pip install -r requirements.txt`
+- Start Command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+- Python: 3.11.x
+
+Vercel frontend:
+
+- Root Directory: `frontend`
+- Build Command: `npm run build`
+- Output Directory: leave empty
+- Set `NEXT_PUBLIC_API_URL` to the Render backend URL

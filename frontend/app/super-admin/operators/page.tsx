@@ -14,7 +14,7 @@ export default function SuperAdminOperatorsPage() {
   useEffect(() => {
     api.superAdminOperators()
       .then(setOperators)
-      .catch((err) => setError(err instanceof Error ? err.message : "Failed to load operators"))
+      .catch((err) => setError(err instanceof Error ? err.message : "Operatorlarni yuklab bo‘lmadi"))
       .finally(() => setLoading(false));
   }, []);
 
@@ -22,11 +22,11 @@ export default function SuperAdminOperatorsPage() {
 
   return (
     <div>
-      <PageHeader title="Operators" description="Telegram operators across the platform." />
+      <PageHeader title="Operatorlar" description="Platformadagi barcha Telegram operatorlar." />
       <ErrorMessage message={error} />
       <Card>
         <AdminTable
-          headers={["Business", "Operator name", "Telegram chat ID", "Username", "Status", "Created"]}
+          headers={["Biznes", "Operator nomi", "Telegram chat ID", "Username", "Holati", "Yaratilgan"]}
           rows={operators.map((operator) => [
             `${operator.business_name} (#${operator.business_id})`,
             operator.name,

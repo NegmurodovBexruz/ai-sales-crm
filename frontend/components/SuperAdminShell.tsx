@@ -9,12 +9,12 @@ import type { User } from "@/lib/types";
 import { SecondaryButton } from "@/components/ui";
 
 const links = [
-  { href: "/super-admin", label: "Overview" },
-  { href: "/super-admin/businesses", label: "Businesses" },
-  { href: "/super-admin/users", label: "Users" },
-  { href: "/super-admin/orders", label: "Orders" },
-  { href: "/super-admin/members", label: "Members" },
-  { href: "/super-admin/operators", label: "Operators" }
+  { href: "/super-admin", label: "Statistika" },
+  { href: "/super-admin/businesses", label: "Bizneslar" },
+  { href: "/super-admin/users", label: "Foydalanuvchilar" },
+  { href: "/super-admin/orders", label: "Buyurtmalar" },
+  { href: "/super-admin/members", label: "A’zolar" },
+  { href: "/super-admin/operators", label: "Operatorlar" }
 ];
 
 export function SuperAdminShell({ children }: { children: React.ReactNode }) {
@@ -43,7 +43,7 @@ export function SuperAdminShell({ children }: { children: React.ReactNode }) {
   if (checkingAuth) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-slate-50 text-sm text-slate-500">
-        Loading super admin...
+        Super admin yuklanmoqda...
       </div>
     );
   }
@@ -77,7 +77,7 @@ export function SuperAdminShell({ children }: { children: React.ReactNode }) {
         <header className="sticky top-0 z-10 border-b border-slate-200 bg-white">
           <div className="flex min-h-16 items-center justify-between gap-3 px-4 md:px-6">
             <div>
-              <div className="text-sm text-slate-500">Signed in as</div>
+              <div className="text-sm text-slate-500">Kirish emaili</div>
               <div className="text-sm font-medium text-slate-900">{user?.email ?? "..."}</div>
             </div>
             <div className="flex items-center gap-2">
@@ -88,7 +88,7 @@ export function SuperAdminShell({ children }: { children: React.ReactNode }) {
                   </Link>
                 ))}
               </nav>
-              <SecondaryButton onClick={logout}>Logout</SecondaryButton>
+              <SecondaryButton onClick={logout}>Chiqish</SecondaryButton>
             </div>
           </div>
         </header>

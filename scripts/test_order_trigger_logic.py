@@ -1,4 +1,4 @@
-import asyncio
+﻿import asyncio
 import sys
 from decimal import Decimal
 from pathlib import Path
@@ -8,12 +8,12 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 ROOT_DIR = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT_DIR))
+sys.path.insert(0, str(ROOT_DIR / "backend"))
 
-from backend.app.bot.handlers import messages  # noqa: E402
-from backend.app.bot.states.order import OrderStates  # noqa: E402
-from backend.app.db.base import Base  # noqa: E402
-from backend.app.models import Business, Conversation, Customer, Product, User  # noqa: E402
+from app.bot.handlers import messages  # noqa: E402
+from app.bot.states.order import OrderStates  # noqa: E402
+from app.db.base import Base  # noqa: E402
+from app.models import Business, Conversation, Customer, Product, User  # noqa: E402
 
 
 class FakeState:
@@ -205,3 +205,4 @@ if __name__ == "__main__":
     test_start_order_callback_starts_quantity_step()
     test_start_order_out_of_stock_does_not_start_fsm()
     print("order trigger logic tests passed")
+

@@ -17,7 +17,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (new URLSearchParams(window.location.search).get("created") === "1") {
-      setSuccess("Account created. Please log in.");
+      setSuccess("Akkaunt yaratildi. Iltimos, tizimga kiring.");
     }
   }, []);
 
@@ -41,7 +41,7 @@ export default function LoginPage() {
       }
       router.replace("/onboarding");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Login failed");
+      setError(err instanceof Error ? err.message : "Kirishda xatolik yuz berdi");
     } finally {
       setLoading(false);
     }
@@ -51,8 +51,8 @@ export default function LoginPage() {
     <main className="flex min-h-screen items-center justify-center bg-slate-50 p-4">
       <Card className="w-full max-w-md">
         <div className="mb-6">
-          <h1 className="text-2xl font-semibold text-slate-950">Login</h1>
-          <p className="mt-1 text-sm text-slate-500">AI Sales CRM dashboardga kirish.</p>
+          <h1 className="text-2xl font-semibold text-slate-950">Kirish</h1>
+          <p className="mt-1 text-sm text-slate-500">AI Sales CRM paneliga kirish.</p>
         </div>
         <form onSubmit={onSubmit} className="space-y-4">
           <ErrorMessage message={error} />
@@ -62,19 +62,19 @@ export default function LoginPage() {
             <Input type="email" value={email} onChange={(event) => setEmail(event.target.value)} required />
           </div>
           <div>
-            <Label>Password</Label>
+            <Label>Parol</Label>
             <Input type="password" value={password} onChange={(event) => setPassword(event.target.value)} required />
           </div>
           <div className="flex items-center justify-between gap-3">
             <Link href="/signup" className="text-sm font-medium text-slate-600 hover:text-slate-950">
-              Sign up
+              Ro‘yxatdan o‘tish
             </Link>
             <Link href="/forgot-password" className="text-sm font-medium text-slate-600 hover:text-slate-950">
-              Forgot password?
+              Parolni unutdingizmi?
             </Link>
           </div>
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "Logging in..." : "Login"}
+            {loading ? "Kirilmoqda..." : "Kirish"}
           </Button>
         </form>
       </Card>

@@ -19,7 +19,7 @@ export default function CustomersPage() {
         setCustomers(data);
         setSelected(data[0] ?? null);
       })
-      .catch((err) => setError(err instanceof Error ? err.message : "Failed to load customers"))
+      .catch((err) => setError(err instanceof Error ? err.message : "Mijozlarni yuklab bo‘lmadi"))
       .finally(() => setLoading(false));
   }, []);
 
@@ -28,28 +28,28 @@ export default function CustomersPage() {
     setConversationLoading(true);
     api.conversations(selected.id)
       .then(setConversations)
-      .catch((err) => setError(err instanceof Error ? err.message : "Failed to load conversation"))
+      .catch((err) => setError(err instanceof Error ? err.message : "Suhbatni yuklab bo‘lmadi"))
       .finally(() => setConversationLoading(false));
   }, [selected]);
 
   return (
     <section className="space-y-4">
       <div>
-        <h1 className="text-2xl font-semibold text-slate-950">Customers</h1>
-        <p className="text-sm text-slate-500">Open a customer to inspect their conversation history.</p>
+        <h1 className="text-2xl font-semibold text-slate-950">Mijozlar</h1>
+        <p className="text-sm text-slate-500">Mijozni tanlab, suhbat tarixini ko‘ring.</p>
       </div>
       <ErrorMessage message={error} />
-      {loading ? <LoadingState /> : customers.length === 0 ? <EmptyState label="No customers yet." /> : (
+      {loading ? <LoadingState /> : customers.length === 0 ? <EmptyState label="Hali mijoz yo‘q." /> : (
         <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_420px]">
           <Card className="overflow-x-auto p-0">
             <table className="w-full min-w-[760px] text-left text-sm">
               <thead className="border-b bg-slate-50 text-slate-500">
                 <tr>
-                  <th className="p-3">Full name</th>
+                  <th className="p-3">To‘liq ism</th>
                   <th className="p-3">Username</th>
-                  <th className="p-3">Phone</th>
-                  <th className="p-3">Language</th>
-                  <th className="p-3">Created</th>
+                  <th className="p-3">Telefon</th>
+                  <th className="p-3">Til</th>
+                  <th className="p-3">Yaratilgan</th>
                 </tr>
               </thead>
               <tbody>
@@ -71,10 +71,10 @@ export default function CustomersPage() {
           </Card>
           <Card>
             <div className="mb-4">
-              <h2 className="text-lg font-semibold text-slate-950">{selected?.full_name || "Conversation"}</h2>
-              <p className="text-sm text-slate-500">{selected?.phone || selected?.username || "Customer history"}</p>
+              <h2 className="text-lg font-semibold text-slate-950">{selected?.full_name || "Suhbat"}</h2>
+              <p className="text-sm text-slate-500">{selected?.phone || selected?.username || "Mijoz tarixi"}</p>
             </div>
-            {conversationLoading ? <LoadingState label="Loading conversation..." /> : conversations.length === 0 ? <EmptyState label="No conversation messages." /> : (
+            {conversationLoading ? <LoadingState label="Suhbat yuklanmoqda..." /> : conversations.length === 0 ? <EmptyState label="Suhbat xabarlari yo‘q." /> : (
               <div className="max-h-[620px] space-y-3 overflow-y-auto pr-1">
                 {conversations.map((message) => (
                   <div key={message.id} className="rounded-md border border-slate-200 bg-slate-50 p-3">

@@ -1,10 +1,11 @@
-from aiogram import F, Router
+﻿from aiogram import F, Router
 from aiogram.types import CallbackQuery
 from sqlalchemy import select
 
+from app.bot.i18n import t
+from app.bot.keyboards import admin_order_actions_keyboard
 from app.db.session import SessionLocal
 from app.models.order import Order
-from app.models.operator_assignment import OperatorAssignment
 from app.models.product import Product
 from app.models.telegram_operator import TelegramOperator
 from app.services.conversation_service import save_conversation_message
@@ -23,18 +24,6 @@ from app.services.order_service import (
 )
 
 router = Router()
-
-ORDER_DONE_CUSTOMER_MESSAGES = {
-    "uz_latin": "Buyurtmangiz tasdiqlandi. Tez orada yetkazib berish bo‘yicha bog‘lanamiz.",
-    "uz_cyrillic": "Буюртмангиз тасдиқланди. Тез орада етказиб бериш бўйича боғланамиз.",
-    "ru": "Ваш заказ подтверждён. Скоро свяжемся с вами по доставке.",
-}
-
-ORDER_CANCEL_CUSTOMER_MESSAGES = {
-    "uz_latin": "Buyurtmangiz bekor qilindi. Batafsil ma’lumot uchun operator bilan bog‘lanishingiz mumkin.",
-    "uz_cyrillic": "Буюртмангиз бекор қилинди. Батафсил маълумот учун оператор билан боғланишингиз мумкин.",
-    "ru": "Ваш заказ отменён. За подробностями можете связаться с оператором.",
-}
 
 
 def is_admin_callback(callback: CallbackQuery) -> bool:
@@ -173,11 +162,11 @@ def low_stock_warning_text(product: Product) -> str | None:
 
 
 def customer_done_message(language: str) -> str:
-    return ORDER_DONE_CUSTOMER_MESSAGES.get(language, ORDER_DONE_CUSTOMER_MESSAGES["uz_latin"])
+    return t(language, "customer_order_done")
 
 
 def customer_cancel_message(language: str) -> str:
-    return ORDER_CANCEL_CUSTOMER_MESSAGES.get(language, ORDER_CANCEL_CUSTOMER_MESSAGES["uz_latin"])
+    return t(language, "customer_order_cancel")
 
 
 def parse_order_id(callback_data: str | None, prefix: str) -> int | None:
@@ -324,3 +313,4 @@ async def admin_order_cancel(callback: CallbackQuery) -> None:
         await callback.answer()
     finally:
         db.close()
+

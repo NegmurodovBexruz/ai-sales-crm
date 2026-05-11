@@ -1,4 +1,4 @@
-import sys
+﻿import sys
 from decimal import Decimal
 from pathlib import Path
 
@@ -6,11 +6,11 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 ROOT_DIR = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT_DIR))
+sys.path.insert(0, str(ROOT_DIR / "backend"))
 
-from backend.app.db.base import Base  # noqa: E402
-from backend.app.models import Business, Customer, Product, User  # noqa: E402
-from backend.app.services.order_service import InsufficientStockError, create_order, mark_order_done  # noqa: E402
+from app.db.base import Base  # noqa: E402
+from app.models import Business, Customer, Product, User  # noqa: E402
+from app.services.order_service import InsufficientStockError, create_order, mark_order_done  # noqa: E402
 
 
 def build_session():
@@ -110,3 +110,4 @@ if __name__ == "__main__":
     test_mark_done_decreases_stock_and_sets_status()
     test_mark_done_fails_when_stock_is_insufficient()
     print("order flow backend tests passed")
+

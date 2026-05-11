@@ -1,4 +1,4 @@
-const TOKEN_KEY = "ai_sales_crm_token";
+const TOKEN_KEY = "access_token";
 const OPERATOR_TOKEN_KEY = "operator_access_token";
 
 export function getToken() {

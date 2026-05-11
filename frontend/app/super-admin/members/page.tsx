@@ -22,7 +22,7 @@ export default function SuperAdminMembersPage() {
     try {
       setMembers(await api.superAdminMembers({ role: role || undefined, status: status || undefined }));
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load members");
+      setError(err instanceof Error ? err.message : "A’zolarni yuklab bo‘lmadi");
     } finally {
       setLoading(false);
     }
@@ -37,16 +37,16 @@ export default function SuperAdminMembersPage() {
 
   return (
     <div>
-      <PageHeader title="Members" description="All business memberships and statuses." />
+      <PageHeader title="A’zolar" description="Barcha biznes a’zolari va ularning holatlari." />
       <ErrorMessage message={error} />
       <Card>
         <form onSubmit={onFilter} className="mb-4 grid gap-2 md:grid-cols-[1fr_1fr_auto]">
-          <Input value={role} onChange={(event) => setRole(event.target.value)} placeholder="Role" />
-          <Input value={status} onChange={(event) => setStatus(event.target.value)} placeholder="Status" />
-          <Button>Filter</Button>
+          <Input value={role} onChange={(event) => setRole(event.target.value)} placeholder="Rol" />
+          <Input value={status} onChange={(event) => setStatus(event.target.value)} placeholder="Holat" />
+          <Button>Filtrlash</Button>
         </form>
         <AdminTable
-          headers={["Business", "User email", "Role", "Status", "Created"]}
+          headers={["Biznes", "Foydalanuvchi emaili", "Rol", "Holat", "Yaratilgan"]}
           rows={members.map((member) => [
             `${member.business_name} (#${member.business_id})`,
             member.user_email,

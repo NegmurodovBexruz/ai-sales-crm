@@ -4,21 +4,15 @@ from aiogram.types import CallbackQuery, Message
 from sqlalchemy import select
 
 from app.bot.context import get_telegram_business_id
+from app.bot.i18n import t
 from app.bot.keyboards import contact_request_keyboard, language_selection_keyboard
 from app.core.config import settings
 from app.db.session import SessionLocal
 from app.models.business import Business
-from app.models.customer import Customer
 from app.services.conversation_service import save_conversation_message
 from app.services.customer_service import get_or_create_telegram_customer
 
 router = Router()
-
-LANGUAGE_SELECTED_MESSAGES = {
-    "uz_latin": "Til tanlandi. Endi savolingizni yozishingiz mumkin.",
-    "uz_cyrillic": "Тил танланди. Энди саволингизни ёзишингиз мумкин.",
-    "ru": "Язык выбран. Теперь можете написать свой вопрос.",
-}
 
 
 def get_default_business(db) -> Business | None:
@@ -45,7 +39,7 @@ async def start_command(message: Message) -> None:
     try:
         business = get_default_business(db)
         if business is None:
-            await message.answer("Bot setup is not ready yet. Please create a business first.")
+            await message.answer(t("uz_latin", "setup_not_ready"))
             return
 
         telegram_user_id, full_name, username = get_telegram_identity(message)
@@ -56,7 +50,7 @@ async def start_command(message: Message) -> None:
             full_name=full_name,
             username=username,
         )
-        await message.answer("Tilni tanlang / Тилни танланг / Выберите язык", reply_markup=language_selection_keyboard())
+        await message.answer(t("uz_latin", "language_prompt"), reply_markup=language_selection_keyboard())
     finally:
         db.close()
 
@@ -68,7 +62,7 @@ async def select_language(callback: CallbackQuery) -> None:
     try:
         business = get_default_business(db)
         if business is None:
-            await callback.answer("Business is not configured", show_alert=True)
+            await callback.answer(t(selected_language, "setup_not_ready"), show_alert=True)
             return
 
         telegram_user_id, full_name, username = get_telegram_identity(callback)
@@ -92,7 +86,7 @@ async def select_language(callback: CallbackQuery) -> None:
         )
 
         await callback.message.answer(
-            LANGUAGE_SELECTED_MESSAGES[selected_language],
+            t(selected_language, "language_selected"),
             reply_markup=contact_request_keyboard(selected_language),
         )
         await callback.answer()

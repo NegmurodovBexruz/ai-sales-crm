@@ -14,28 +14,28 @@ export default function SuperAdminOverviewPage() {
   useEffect(() => {
     api.superAdminStats()
       .then(setStats)
-      .catch((err) => setError(err instanceof Error ? err.message : "Failed to load stats"))
+      .catch((err) => setError(err instanceof Error ? err.message : "Statistikani yuklab bo‘lmadi"))
       .finally(() => setLoading(false));
   }, []);
 
   if (loading) return <LoadingState />;
 
   const cards = stats ? [
-    ["Total businesses", stats.total_businesses],
-    ["Active businesses", stats.active_businesses],
-    ["Total users", stats.total_users],
-    ["Total orders", stats.total_orders],
-    ["Total customers", stats.total_customers],
-    ["Total products", stats.total_products],
-    ["Total operators", stats.total_operators],
-    ["Orders today", stats.orders_today],
-    ["New users today", stats.new_users_today],
-    ["New businesses today", stats.new_businesses_today]
+    ["Jami bizneslar", stats.total_businesses],
+    ["Aktiv bizneslar", stats.active_businesses],
+    ["Jami foydalanuvchilar", stats.total_users],
+    ["Jami buyurtmalar", stats.total_orders],
+    ["Jami mijozlar", stats.total_customers],
+    ["Jami mahsulotlar", stats.total_products],
+    ["Jami operatorlar", stats.total_operators],
+    ["Bugungi buyurtmalar", stats.orders_today],
+    ["Bugungi yangi foydalanuvchilar", stats.new_users_today],
+    ["Bugungi yangi bizneslar", stats.new_businesses_today]
   ] : [];
 
   return (
     <div>
-      <PageHeader title="Overview" description="Platform-wide totals and today's activity." />
+      <PageHeader title="Statistika" description="Platforma bo‘yicha umumiy ko‘rsatkichlar va bugungi faollik." />
       <ErrorMessage message={error} />
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
         {cards.map(([label, value]) => (

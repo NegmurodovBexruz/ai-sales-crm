@@ -62,7 +62,7 @@ export function Card({ children, className = "" }: { children: React.ReactNode; 
   return <div className={`rounded-lg border border-slate-200 bg-white p-4 shadow-sm ${className}`}>{children}</div>;
 }
 
-export function LoadingState({ label = "Loading..." }: { label?: string }) {
+export function LoadingState({ label = "Yuklanmoqda..." }: { label?: string }) {
   return <div className="rounded-lg border border-slate-200 bg-white p-6 text-sm text-slate-500">{label}</div>;
 }
 

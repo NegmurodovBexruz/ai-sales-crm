@@ -1,4 +1,4 @@
-import sys
+﻿import sys
 import asyncio
 from decimal import Decimal
 from pathlib import Path
@@ -8,22 +8,22 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 ROOT_DIR = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT_DIR))
+sys.path.insert(0, str(ROOT_DIR / "backend"))
 
-from backend.app.bot.handlers.admin_orders import (  # noqa: E402
+from app.bot.handlers.admin_orders import (  # noqa: E402
     admin_order_cancel,
     admin_order_done,
     customer_cancel_message,
     customer_done_message,
     low_stock_warning_text,
 )
-from backend.app.bot.handlers import admin_orders  # noqa: E402
-from backend.app.bot.handlers import messages  # noqa: E402
-from backend.app.bot.handlers.messages import notify_admin_order  # noqa: E402
-from backend.app.db.base import Base  # noqa: E402
-from backend.app.models import Business, Customer, Order, Product, TelegramOperator, User  # noqa: E402
-from backend.app.services.operator_assignment_service import create_assignment  # noqa: E402
-from backend.app.services.order_service import cancel_order, create_order, mark_order_done  # noqa: E402
+from app.bot.handlers import admin_orders  # noqa: E402
+from app.bot.handlers import messages  # noqa: E402
+from app.bot.handlers.messages import notify_admin_order  # noqa: E402
+from app.db.base import Base  # noqa: E402
+from app.models import Business, Customer, Order, Product, TelegramOperator, User  # noqa: E402
+from app.services.operator_assignment_service import create_assignment  # noqa: E402
+from app.services.order_service import cancel_order, create_order, mark_order_done  # noqa: E402
 
 
 def build_session():
@@ -168,9 +168,9 @@ def test_admin_order_notification_includes_done_cancel_keyboard():
     reply_markup = bot.sent_messages[0][2]["reply_markup"]
     done_button = reply_markup.inline_keyboard[0][0]
     cancel_button = reply_markup.inline_keyboard[0][1]
-    assert done_button.text == "✅ Done"
+    assert done_button.text == "✅ Yakunlash"
     assert done_button.callback_data == f"admin_order_done:{order.id}"
-    assert cancel_button.text == "❌ Cancel"
+    assert cancel_button.text == "❌ Bekor qilish"
     assert cancel_button.callback_data == f"admin_order_cancel:{order.id}"
 
 
@@ -220,3 +220,4 @@ if __name__ == "__main__":
     test_admin_done_callback_decreases_stock()
     test_admin_cancel_callback_does_not_decrease_stock()
     print("admin order status tests passed")
+

@@ -1,4 +1,4 @@
-import asyncio
+﻿import asyncio
 import sys
 from pathlib import Path
 from types import SimpleNamespace
@@ -7,13 +7,13 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 ROOT_DIR = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT_DIR))
+sys.path.insert(0, str(ROOT_DIR / "backend"))
 
-from backend.app.bot.handlers import messages  # noqa: E402
-from backend.app.bot.states.order import OrderStates  # noqa: E402
-from backend.app.db.base import Base  # noqa: E402
-from backend.app.models import Business, Customer, User  # noqa: E402
-from backend.app.utils.phone import is_valid_uz_phone, normalize_uz_phone  # noqa: E402
+from app.bot.handlers import messages  # noqa: E402
+from app.bot.states.order import OrderStates  # noqa: E402
+from app.db.base import Base  # noqa: E402
+from app.models import Business, Customer, User  # noqa: E402
+from app.utils.phone import is_valid_uz_phone, normalize_uz_phone  # noqa: E402
 
 
 class FakeState:
@@ -280,3 +280,4 @@ if __name__ == "__main__":
     test_telegram_contact_saves_phone_and_continues_flow()
     test_pending_operator_invalid_phone_text_is_rejected()
     print("phone validation tests passed")
+

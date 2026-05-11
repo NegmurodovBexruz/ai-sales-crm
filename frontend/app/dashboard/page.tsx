@@ -29,17 +29,17 @@ export default function OverviewPage() {
         setCustomers(customerData);
         setOperators(operatorData);
       })
-      .catch((err) => setError(err instanceof Error ? err.message : "Failed to load overview"))
+      .catch((err) => setError(err instanceof Error ? err.message : "Umumiy ma’lumotlarni yuklab bo‘lmadi"))
       .finally(() => setLoading(false));
   }, [router]);
 
   const stats = [
-    { label: "Total products", value: products.length },
-    { label: "Total orders", value: orders.length },
-    { label: "Total customers", value: customers.length },
-    { label: "New orders", value: orders.filter((order) => order.status === "new").length },
-    { label: "Low stock products", value: products.filter((product) => product.stock_count > 0 && product.stock_count <= 10).length },
-    { label: "Out of stock products", value: products.filter((product) => product.stock_count === 0).length }
+    { label: "Jami mahsulotlar", value: products.length },
+    { label: "Jami buyurtmalar", value: orders.length },
+    { label: "Jami mijozlar", value: customers.length },
+    { label: "Yangi buyurtmalar", value: orders.filter((order) => order.status === "new").length },
+    { label: "Kam qolgan mahsulotlar", value: products.filter((product) => product.stock_count > 0 && product.stock_count <= 10).length },
+    { label: "Qolmagan mahsulotlar", value: products.filter((product) => product.stock_count === 0).length }
   ];
   const hasActiveOperator = operators.some((operator) => operator.is_active);
 
@@ -47,17 +47,17 @@ export default function OverviewPage() {
     <section className="space-y-4">
       <div>
         <h1 className="text-2xl font-semibold text-slate-950">
-          {businessState?.business ? `Dashboard - ${businessState.business.name}` : "Dashboard"}
+          {businessState?.business ? `Panel - ${businessState.business.name}` : "Umumiy ko‘rinish"}
         </h1>
         {businessState?.business?.public_business_id && businessState.membership?.role === "owner" && (
-          <p className="mt-1 text-sm font-medium text-slate-600">Business ID: {businessState.business.public_business_id}</p>
+          <p className="mt-1 text-sm font-medium text-slate-600">Biznes ID: {businessState.business.public_business_id}</p>
         )}
-        <p className="mt-1 text-sm text-slate-500">Current business totals calculated from products, orders, and customers.</p>
+        <p className="mt-1 text-sm text-slate-500">Mahsulotlar, buyurtmalar va mijozlar bo‘yicha joriy ko‘rsatkichlar.</p>
       </div>
       <ErrorMessage message={error} />
       {!loading && !hasActiveOperator && (
         <div className="rounded-md border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
-          Active operator yo'q. AI operatorga yo'naltira olmaydi.
+          Aktiv operator yo‘q. AI operatorga yo‘naltira olmaydi.
         </div>
       )}
       {loading ? (

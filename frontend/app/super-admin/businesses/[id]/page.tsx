@@ -25,7 +25,7 @@ export default function SuperAdminBusinessDetailPage() {
     try {
       setDetail(await api.superAdminBusiness(businessId));
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load business");
+      setError(err instanceof Error ? err.message : "Biznesni yuklab bo‘lmadi");
     } finally {
       setLoading(false);
     }
@@ -49,56 +49,56 @@ export default function SuperAdminBusinessDetailPage() {
       });
       await loadDetail();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not update business");
+      setError(err instanceof Error ? err.message : "Biznesni yangilab bo‘lmadi");
     } finally {
       setSaving(false);
     }
   }
 
   if (loading) return <LoadingState />;
-  if (!detail) return <ErrorMessage message={error || "Business not found"} />;
+  if (!detail) return <ErrorMessage message={error || "Biznes topilmadi"} />;
 
   const business = detail.business;
 
   return (
     <div className="space-y-4">
       <div className="flex items-start justify-between gap-3">
-        <PageHeader title={business.name} description={`Business ${business.public_business_id}`} />
-        <Link href="/super-admin/businesses" className="text-sm font-medium text-slate-600 hover:text-slate-950">Back</Link>
+        <PageHeader title={business.name} description={`Biznes ${business.public_business_id}`} />
+        <Link href="/super-admin/businesses" className="text-sm font-medium text-slate-600 hover:text-slate-950">Ortga</Link>
       </div>
       <ErrorMessage message={error} />
 
       <div className="grid gap-4 xl:grid-cols-[0.9fr_1.1fr]">
         <Card>
-          <h2 className="mb-4 text-lg font-semibold text-slate-950">Business info</h2>
+          <h2 className="mb-4 text-lg font-semibold text-slate-950">Biznes ma’lumotlari</h2>
           <form onSubmit={saveBusiness} className="space-y-3">
-            <div><Label>Name</Label><Input name="name" defaultValue={business.name} required /></div>
-            <div><Label>Phone</Label><Input name="phone" defaultValue={business.phone || ""} /></div>
-            <div><Label>Description</Label><Textarea name="description" defaultValue={business.description || ""} /></div>
-            <div><Label>Delivery policy</Label><Textarea name="delivery_policy" defaultValue={business.delivery_policy || ""} /></div>
-            <div><Label>Return policy</Label><Textarea name="return_policy" defaultValue={business.return_policy || ""} /></div>
-            <div><Label>Working hours</Label><Input name="working_hours" defaultValue={business.working_hours || ""} /></div>
+            <div><Label>Nomi</Label><Input name="name" defaultValue={business.name} required /></div>
+            <div><Label>Telefon</Label><Input name="phone" defaultValue={business.phone || ""} /></div>
+            <div><Label>Tavsif</Label><Textarea name="description" defaultValue={business.description || ""} /></div>
+            <div><Label>Yetkazib berish qoidasi</Label><Textarea name="delivery_policy" defaultValue={business.delivery_policy || ""} /></div>
+            <div><Label>Qaytarish qoidasi</Label><Textarea name="return_policy" defaultValue={business.return_policy || ""} /></div>
+            <div><Label>Ish vaqti</Label><Input name="working_hours" defaultValue={business.working_hours || ""} /></div>
             <div><Label>AI tone</Label><Input name="ai_tone" defaultValue={business.ai_tone || ""} /></div>
             <div>
-              <Label>Status</Label>
+              <Label>Holati</Label>
               <select name="is_active" defaultValue={String(business.is_active)} className="h-10 w-full rounded-md border border-slate-300 bg-white px-3 text-sm">
-                <option value="true">Active</option>
-                <option value="false">Inactive</option>
+                <option value="true">Aktiv</option>
+                <option value="false">Noaktiv</option>
               </select>
             </div>
-            <Button disabled={saving}>{saving ? "Saving..." : "Save business"}</Button>
+            <Button disabled={saving}>{saving ? "Saqlanmoqda..." : "Biznesni saqlash"}</Button>
           </form>
         </Card>
 
         <Card>
-          <h2 className="mb-4 text-lg font-semibold text-slate-950">Knowledge file info</h2>
+          <h2 className="mb-4 text-lg font-semibold text-slate-950">Bilim fayli ma’lumotlari</h2>
           <div className="grid gap-3 text-sm">
-            <Meta label="Status" value={<StatusText active={business.is_active} />} />
-            <Meta label="Created" value={formatDate(business.created_at)} />
-            <Meta label="Knowledge file" value={detail.business_knowledge.knowledge_file_name || "-"} />
-            <Meta label="Knowledge uploaded" value={formatDate(detail.business_knowledge.knowledge_uploaded_at)} />
+            <Meta label="Holati" value={<StatusText active={business.is_active} />} />
+            <Meta label="Yaratilgan" value={formatDate(business.created_at)} />
+            <Meta label="Bilim fayli" value={detail.business_knowledge.knowledge_file_name || "-"} />
+            <Meta label="Bilim yuklangan vaqt" value={formatDate(detail.business_knowledge.knowledge_uploaded_at)} />
             <div>
-              <div className="text-xs font-medium uppercase text-slate-500">Knowledge preview</div>
+              <div className="text-xs font-medium uppercase text-slate-500">Bilim matni ko‘rinishi</div>
               <p className="mt-1 max-h-64 overflow-auto rounded-md bg-slate-50 p-3 text-slate-700">
                 {detail.business_knowledge.business_knowledge_text_preview || "-"}
               </p>
@@ -108,8 +108,8 @@ export default function SuperAdminBusinessDetailPage() {
       </div>
 
       <Card>
-        <h2 className="mb-3 text-lg font-semibold text-slate-950">Members</h2>
-        <AdminTable headers={["Business", "User email", "Role", "Status", "Created"]} rows={detail.members.map((member) => [
+        <h2 className="mb-3 text-lg font-semibold text-slate-950">A’zolar</h2>
+        <AdminTable headers={["Biznes", "Foydalanuvchi emaili", "Rol", "Holat", "Yaratilgan"]} rows={detail.members.map((member) => [
           `${member.business_name} (#${member.business_id})`,
           member.user_email,
           member.role,
@@ -119,8 +119,8 @@ export default function SuperAdminBusinessDetailPage() {
       </Card>
 
       <Card>
-        <h2 className="mb-3 text-lg font-semibold text-slate-950">Products</h2>
-        <AdminTable headers={["ID", "Name", "Category", "Price", "Stock", "Status", "Created"]} rows={detail.products.map((product) => [
+        <h2 className="mb-3 text-lg font-semibold text-slate-950">Mahsulotlar</h2>
+        <AdminTable headers={["ID", "Nomi", "Kategoriya", "Narx", "Ombor", "Holat", "Yaratilgan"]} rows={detail.products.map((product) => [
           product.id,
           product.name,
           product.category || "-",
@@ -132,8 +132,8 @@ export default function SuperAdminBusinessDetailPage() {
       </Card>
 
       <Card>
-        <h2 className="mb-3 text-lg font-semibold text-slate-950">Operators</h2>
-        <AdminTable headers={["Name", "Telegram chat ID", "Username", "Status", "Created"]} rows={detail.operators.map((operator) => [
+        <h2 className="mb-3 text-lg font-semibold text-slate-950">Operatorlar</h2>
+        <AdminTable headers={["Nomi", "Telegram chat ID", "Username", "Holati", "Yaratilgan"]} rows={detail.operators.map((operator) => [
           operator.name,
           operator.telegram_chat_id,
           operator.username || "-",
@@ -143,8 +143,8 @@ export default function SuperAdminBusinessDetailPage() {
       </Card>
 
       <Card>
-        <h2 className="mb-3 text-lg font-semibold text-slate-950">Recent orders</h2>
-        <AdminTable headers={["Order", "Customer", "Phone", "Product", "Qty", "Total", "Status", "Created"]} rows={detail.recent_orders.map((order) => [
+        <h2 className="mb-3 text-lg font-semibold text-slate-950">Oxirgi buyurtmalar</h2>
+        <AdminTable headers={["Buyurtma", "Mijoz", "Telefon", "Mahsulot", "Soni", "Jami", "Holat", "Yaratilgan"]} rows={detail.recent_orders.map((order) => [
           `#${order.id}`,
           order.customer_name,
           order.phone,
@@ -157,8 +157,8 @@ export default function SuperAdminBusinessDetailPage() {
       </Card>
 
       <Card>
-        <h2 className="mb-3 text-lg font-semibold text-slate-950">Recent customers</h2>
-        <AdminTable headers={["ID", "Name", "Username", "Phone", "Language", "Created"]} rows={detail.recent_customers.map((customer) => [
+        <h2 className="mb-3 text-lg font-semibold text-slate-950">Oxirgi mijozlar</h2>
+        <AdminTable headers={["ID", "Nomi", "Username", "Telefon", "Til", "Yaratilgan"]} rows={detail.recent_customers.map((customer) => [
           customer.id,
           customer.full_name || "-",
           customer.username || "-",

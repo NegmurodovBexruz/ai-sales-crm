@@ -26,7 +26,7 @@ export default function OrdersPage() {
 
   useEffect(() => {
     loadData()
-      .catch((err) => setError(err instanceof Error ? err.message : "Failed to load orders"))
+      .catch((err) => setError(err instanceof Error ? err.message : "Buyurtmalarni yuklab bo‘lmadi"))
       .finally(() => setLoading(false));
   }, []);
 
@@ -39,7 +39,7 @@ export default function OrdersPage() {
       await action();
       await loadData();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Order action failed");
+      setError(err instanceof Error ? err.message : "Buyurtma amali bajarilmadi");
     } finally {
       setBusyId(null);
     }
@@ -48,24 +48,24 @@ export default function OrdersPage() {
   return (
     <section className="space-y-4">
       <div>
-        <h1 className="text-2xl font-semibold text-slate-950">Orders</h1>
-        <p className="text-sm text-slate-500">Review new orders, mark completed orders done, or cancel orders.</p>
+        <h1 className="text-2xl font-semibold text-slate-950">Buyurtmalar</h1>
+        <p className="text-sm text-slate-500">Yangi buyurtmalarni ko‘ring, yakunlang yoki bekor qiling.</p>
       </div>
       <ErrorMessage message={error} />
-      {loading ? <LoadingState /> : orders.length === 0 ? <EmptyState label="No orders yet." /> : (
+      {loading ? <LoadingState /> : orders.length === 0 ? <EmptyState label="Hali buyurtma yo‘q." /> : (
         <Card className="overflow-x-auto p-0">
           <table className="w-full min-w-[1100px] text-left text-sm">
             <thead className="border-b bg-slate-50 text-slate-500">
               <tr>
-                <th className="p-3">Customer</th>
-                <th className="p-3">Product</th>
-                <th className="p-3">Qty</th>
-                <th className="p-3">Total</th>
-                <th className="p-3">Address</th>
-                <th className="p-3">Comment</th>
-                <th className="p-3">Status</th>
-                <th className="p-3">Created</th>
-                <th className="p-3">Actions</th>
+                <th className="p-3">Mijoz</th>
+                <th className="p-3">Mahsulot</th>
+                <th className="p-3">Soni</th>
+                <th className="p-3">Umumiy narx</th>
+                <th className="p-3">Manzil</th>
+                <th className="p-3">Izoh</th>
+                <th className="p-3">Holat</th>
+                <th className="p-3">Yaratilgan</th>
+                <th className="p-3">Amallar</th>
               </tr>
             </thead>
             <tbody>
@@ -100,8 +100,8 @@ export default function OrdersPage() {
                   <td className="p-3 text-slate-500">{formatDate(order.created_at)}</td>
                   <td className="p-3">
                     <div className="flex gap-2">
-                      <Button disabled={busyId === order.id || order.status === "done"} onClick={() => run(order.id, () => api.markOrderDone(order.id))}>Done</Button>
-                      <DangerButton disabled={busyId === order.id || order.status === "cancelled"} onClick={() => run(order.id, () => api.updateOrderStatus(order.id, "cancelled"))}>Cancel</DangerButton>
+                      <Button disabled={busyId === order.id || order.status === "done"} onClick={() => run(order.id, () => api.markOrderDone(order.id))}>Yakunlash</Button>
+                      <DangerButton disabled={busyId === order.id || order.status === "cancelled"} onClick={() => run(order.id, () => api.updateOrderStatus(order.id, "cancelled"))}>Bekor qilish</DangerButton>
                     </div>
                   </td>
                 </tr>

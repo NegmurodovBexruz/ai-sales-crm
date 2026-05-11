@@ -36,7 +36,7 @@ export default function OnboardingPage() {
           router.replace("/dashboard");
         }
       })
-      .catch((err) => setError(err instanceof Error ? err.message : "Failed to load account state"))
+      .catch((err) => setError(err instanceof Error ? err.message : "Akkaunt holatini yuklab bo‘lmadi"))
       .finally(() => setLoading(false));
   }, [router]);
 
@@ -48,7 +48,7 @@ export default function OnboardingPage() {
       await api.createBusiness({ name, description: description || null, phone: phone || null });
       router.replace("/dashboard");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not create business");
+      setError(err instanceof Error ? err.message : "Biznes yaratib bo‘lmadi");
     } finally {
       setSaving(false);
     }
@@ -63,15 +63,15 @@ export default function OnboardingPage() {
       const response = await api.joinBusiness(adminJoinCode.trim().toUpperCase());
       const alreadyPending = response.message?.toLowerCase().includes("already");
       setNotice({
-        title: alreadyPending ? "Request yuborilgan" : "Request yuborildi",
+        title: alreadyPending ? "So‘rov yuborilgan" : "So‘rov yuborildi",
         message: alreadyPending
-          ? "Request allaqachon yuborilgan. Owner tasdiqlashini kuting."
-          : "Owner tasdiqlasa sizni business panelga avtomatik o'tkazamiz."
+          ? "So‘rov allaqachon yuborilgan. Owner tasdiqlashini kuting."
+          : "Owner tasdiqlasa sizni biznes panelga avtomatik o‘tkazamiz."
       });
       const businessMe = await api.businessMe();
       setState(businessMe);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not submit join request");
+      setError(err instanceof Error ? err.message : "Qo‘shilish so‘rovini yuborib bo‘lmadi");
     } finally {
       setSaving(false);
     }
@@ -104,13 +104,13 @@ export default function OnboardingPage() {
     return (
       <main className="flex min-h-screen items-center justify-center bg-slate-50 p-4">
         <Card className="w-full max-w-md text-center">
-          <h1 className="text-2xl font-semibold text-slate-950">Request yuborilgan</h1>
+          <h1 className="text-2xl font-semibold text-slate-950">So‘rov yuborilgan</h1>
           <p className="mt-3 text-sm text-slate-600">
-            Owner tasdiqlasa sizni business panelga avtomatik o'tkazamiz.
+            Owner tasdiqlasa sizni biznes panelga avtomatik o‘tkazamiz.
           </p>
           <div className="mt-6 flex justify-center gap-2">
             <Button onClick={goInitial}>OK</Button>
-            <SecondaryButton onClick={logout}>Logout</SecondaryButton>
+            <SecondaryButton onClick={logout}>Chiqish</SecondaryButton>
           </div>
         </Card>
       </main>
@@ -122,10 +122,10 @@ export default function OnboardingPage() {
       <Card className="w-full max-w-2xl">
         <div className="mb-6 flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-semibold text-slate-950">Set up business access</h1>
-            <p className="mt-1 text-sm text-slate-500">Create a new business or request admin access to an existing business.</p>
+            <h1 className="text-2xl font-semibold text-slate-950">Biznesga kirishni sozlash</h1>
+            <p className="mt-1 text-sm text-slate-500">Yangi biznes yarating yoki mavjud biznesga admin sifatida qo‘shiling.</p>
           </div>
-          <SecondaryButton onClick={logout}>Logout</SecondaryButton>
+          <SecondaryButton onClick={logout}>Chiqish</SecondaryButton>
         </div>
         <ErrorMessage message={error} />
         {mode === null && (
@@ -135,36 +135,36 @@ export default function OnboardingPage() {
               onClick={() => setMode("create")}
               className="rounded-lg border border-slate-200 bg-white p-6 text-left shadow-sm transition hover:border-slate-400 hover:bg-slate-50"
             >
-              <div className="text-lg font-semibold text-slate-950">Create business</div>
-              <div className="mt-2 text-sm text-slate-500">Start a new business workspace as owner.</div>
+              <div className="text-lg font-semibold text-slate-950">Biznes yaratish</div>
+              <div className="mt-2 text-sm text-slate-500">Owner sifatida yangi biznes ish joyini boshlang.</div>
             </button>
             <button
               type="button"
               onClick={() => setMode("join")}
               className="rounded-lg border border-slate-200 bg-white p-6 text-left shadow-sm transition hover:border-slate-400 hover:bg-slate-50"
             >
-              <div className="text-lg font-semibold text-slate-950">Join as admin</div>
-              <div className="mt-2 text-sm text-slate-500">Request access using the owner-provided admin join code.</div>
+              <div className="text-lg font-semibold text-slate-950">Admin sifatida qo‘shilish</div>
+              <div className="mt-2 text-sm text-slate-500">Owner bergan admin join code orqali so‘rov yuboring.</div>
             </button>
           </div>
         )}
         {mode === "create" && (
           <form onSubmit={createBusiness} className="mt-6 space-y-4">
             <div>
-              <Label>Business name</Label>
+              <Label>Biznes nomi</Label>
               <Input value={name} onChange={(event) => setName(event.target.value)} required />
             </div>
             <div>
-              <Label>Phone</Label>
+              <Label>Telefon</Label>
               <Input value={phone} onChange={(event) => setPhone(event.target.value)} />
             </div>
             <div>
-              <Label>Description</Label>
+              <Label>Tavsif</Label>
               <Textarea value={description} onChange={(event) => setDescription(event.target.value)} />
             </div>
             <div className="flex gap-2">
-              <Button disabled={saving}>{saving ? "Creating..." : "Create business"}</Button>
-              <SecondaryButton type="button" onClick={goInitial}>Back</SecondaryButton>
+              <Button disabled={saving}>{saving ? "Yaratilmoqda..." : "Biznes yaratish"}</Button>
+              <SecondaryButton type="button" onClick={goInitial}>Ortga</SecondaryButton>
             </div>
           </form>
         )}
@@ -173,11 +173,11 @@ export default function OnboardingPage() {
             <div>
               <Label>Admin join code</Label>
               <Input value={adminJoinCode} onChange={(event) => setAdminJoinCode(event.target.value)} placeholder="ADM-8KQ2M9" required />
-              <p className="mt-1 text-sm text-slate-500">Admin join code ni business ownerdan oling.</p>
+              <p className="mt-1 text-sm text-slate-500">Admin join code ni biznes owneridan oling.</p>
             </div>
             <div className="flex gap-2">
-              <Button disabled={saving}>{saving ? "Sending..." : "Send request"}</Button>
-              <SecondaryButton type="button" onClick={goInitial}>Back</SecondaryButton>
+              <Button disabled={saving}>{saving ? "Yuborilmoqda..." : "So‘rov yuborish"}</Button>
+              <SecondaryButton type="button" onClick={goInitial}>Ortga</SecondaryButton>
             </div>
           </form>
         )}

@@ -1,4 +1,4 @@
-import sys
+﻿import sys
 from decimal import Decimal
 from pathlib import Path
 
@@ -8,13 +8,13 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
 ROOT_DIR = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT_DIR))
+sys.path.insert(0, str(ROOT_DIR / "backend"))
 
-from backend.app.api.deps import get_db  # noqa: E402
-from backend.app.core.security import create_access_token  # noqa: E402
-from backend.app.db.base import Base  # noqa: E402
-from backend.app.main import app  # noqa: E402
-from backend.app.models import Business, BusinessMember, Customer, Order, Product, TelegramOperator, User  # noqa: E402
+from app.api.deps import get_db  # noqa: E402
+from app.core.security import create_access_token  # noqa: E402
+from app.db.base import Base  # noqa: E402
+from app.main import app  # noqa: E402
+from app.models import Business, BusinessMember, Customer, Order, Product, TelegramOperator, User  # noqa: E402
 
 
 def build_client():
@@ -164,3 +164,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+

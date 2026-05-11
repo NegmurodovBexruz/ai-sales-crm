@@ -21,7 +21,7 @@ export default function SuperAdminBusinessesPage() {
     try {
       setBusinesses(await api.superAdminBusinesses({ search: query || undefined }));
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load businesses");
+      setError(err instanceof Error ? err.message : "Bizneslarni yuklab bo‘lmadi");
     } finally {
       setLoading(false);
     }
@@ -36,12 +36,12 @@ export default function SuperAdminBusinessesPage() {
 
   return (
     <div>
-      <PageHeader title="Businesses" description="Search and inspect all platform businesses." />
+      <PageHeader title="Bizneslar" description="Platformadagi barcha bizneslarni qidiring va ko‘ring." />
       <ErrorMessage message={error} />
       <Card>
-        <SearchBar value={search} onChange={setSearch} onSubmit={onSearch} placeholder="Search name, phone, public ID" />
+        <SearchBar value={search} onChange={setSearch} onSubmit={onSearch} placeholder="Nomi, telefon yoki public ID bo‘yicha qidirish" />
         <AdminTable
-          headers={["Business ID", "Name", "Phone", "Owners", "Admins", "Products", "Orders", "Customers", "Operators", "Created", "Status", "Actions"]}
+          headers={["Biznes ID", "Nomi", "Telefon", "Ownerlar", "Adminlar", "Mahsulotlar", "Buyurtmalar", "Mijozlar", "Operatorlar", "Yaratilgan", "Holati", "Amallar"]}
           rows={businesses.map((business) => [
             business.public_business_id,
             business.name,

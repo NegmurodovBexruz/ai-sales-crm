@@ -19,31 +19,31 @@ export default function OperatorProductsPage() {
   useEffect(() => {
     api.operatorProducts()
       .then(setProducts)
-      .catch((err) => setError(err instanceof Error ? err.message : "Failed to load products"))
+      .catch((err) => setError(err instanceof Error ? err.message : "Mahsulotlarni yuklab bo‘lmadi"))
       .finally(() => setLoading(false));
   }, []);
 
   return (
     <section className="space-y-4">
       <div>
-        <h1 className="text-2xl font-semibold text-slate-950">Products</h1>
-        <p className="text-sm text-slate-500">Read-only product catalog for your business.</p>
+        <h1 className="text-2xl font-semibold text-slate-950">Mahsulotlar</h1>
+        <p className="text-sm text-slate-500">Biznesingiz mahsulot katalogi.</p>
       </div>
       <ErrorMessage message={error} />
       {loading ? <LoadingState /> : products.length === 0 ? (
-        <EmptyState label="No products found." />
+        <EmptyState label="Mahsulot topilmadi." />
       ) : (
         <Card className="overflow-x-auto p-0">
           <table className="w-full min-w-[900px] text-left text-sm">
             <thead className="border-b bg-slate-50 text-slate-500">
               <tr>
-                <th className="p-3">Name</th>
-                <th className="p-3">Category</th>
-                <th className="p-3">Price</th>
-                <th className="p-3">Discount</th>
-                <th className="p-3">Stock</th>
-                <th className="p-3">Status</th>
-                <th className="p-3">Description</th>
+                <th className="p-3">Nomi</th>
+                <th className="p-3">Kategoriya</th>
+                <th className="p-3">Narx</th>
+                <th className="p-3">Chegirma</th>
+                <th className="p-3">Ombor</th>
+                <th className="p-3">Holati</th>
+                <th className="p-3">Tavsif</th>
               </tr>
             </thead>
             <tbody>

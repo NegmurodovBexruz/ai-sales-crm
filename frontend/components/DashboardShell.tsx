@@ -9,17 +9,17 @@ import type { BusinessMe, User } from "@/lib/types";
 import { SecondaryButton } from "@/components/ui";
 
 const links = [
-  { href: "/dashboard", label: "Overview" },
-  { href: "/dashboard/products", label: "Products" },
-  { href: "/dashboard/orders", label: "Orders" },
-  { href: "/dashboard/customers", label: "Customers" },
-  { href: "/dashboard/operators", label: "Operators" }
+  { href: "/dashboard", label: "Umumiy ko‘rinish" },
+  { href: "/dashboard/products", label: "Mahsulotlar" },
+  { href: "/dashboard/orders", label: "Buyurtmalar" },
+  { href: "/dashboard/customers", label: "Mijozlar" },
+  { href: "/dashboard/operators", label: "Operatorlar" }
 ];
 
 const ownerLinks = [
   ...links,
-  { href: "/dashboard/settings", label: "Settings" },
-  { href: "/dashboard/members", label: "Members" },
+  { href: "/dashboard/settings", label: "Sozlamalar" },
+  { href: "/dashboard/members", label: "A’zolar" },
 ];
 
 export function DashboardShell({ children }: { children: React.ReactNode }) {
@@ -56,7 +56,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   if (checkingAuth) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-slate-50 text-sm text-slate-500">
-        Loading dashboard...
+        Panel yuklanmoqda...
       </div>
     );
   }
@@ -68,7 +68,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
       <aside className="fixed inset-y-0 left-0 hidden w-64 border-r border-slate-200 bg-white p-4 md:block">
         <div className="mb-6">
           <div className="text-lg font-semibold text-slate-950">AI Sales CRM</div>
-          <div className="text-sm text-slate-500">Admin dashboard</div>
+          <div className="text-sm text-slate-500">Admin paneli</div>
         </div>
         <nav className="space-y-1">
           {visibleLinks.map((link) => {
@@ -92,7 +92,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
         <header className="sticky top-0 z-10 border-b border-slate-200 bg-white">
           <div className="flex min-h-16 items-center justify-between gap-3 px-4 md:px-6">
             <div>
-              <div className="text-sm text-slate-500">Signed in as</div>
+              <div className="text-sm text-slate-500">Kirish emaili</div>
               <div className="text-sm font-medium text-slate-900">{user?.email ?? "..."}</div>
             </div>
             <div className="flex items-center gap-2">
@@ -103,7 +103,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
                   </Link>
                 ))}
               </nav>
-              <SecondaryButton onClick={logout}>Logout</SecondaryButton>
+              <SecondaryButton onClick={logout}>Chiqish</SecondaryButton>
             </div>
           </div>
         </header>

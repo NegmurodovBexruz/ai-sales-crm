@@ -23,7 +23,7 @@ export default function OperatorLoginPage() {
       setOperatorToken(response.access_token);
       router.replace("/operator-dashboard/products");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Operator login failed");
+      setError(err instanceof Error ? err.message : "Operator kirishida xatolik yuz berdi");
     } finally {
       setLoading(false);
     }
@@ -33,8 +33,8 @@ export default function OperatorLoginPage() {
     <main className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
       <Card className="w-full max-w-md">
         <div className="mb-6">
-          <h1 className="text-2xl font-semibold text-slate-950">Operator login</h1>
-          <p className="text-sm text-slate-500">Use your operator code and Telegram chat ID.</p>
+          <h1 className="text-2xl font-semibold text-slate-950">Operator kirishi</h1>
+          <p className="text-sm text-slate-500">Operator code va Telegram chat ID orqali kiring.</p>
         </div>
         <ErrorMessage message={error} />
         <form onSubmit={onSubmit} className="mt-4 space-y-4">
@@ -46,10 +46,10 @@ export default function OperatorLoginPage() {
             <Label>Telegram chat ID</Label>
             <Input value={telegramChatId} onChange={(event) => setTelegramChatId(event.target.value)} placeholder="123456789" required />
           </div>
-          <Button className="w-full" disabled={loading}>{loading ? "Logging in..." : "Login"}</Button>
+          <Button className="w-full" disabled={loading}>{loading ? "Kirilmoqda..." : "Kirish"}</Button>
         </form>
         <div className="mt-4 text-center text-sm text-slate-500">
-          <Link href="/login" className="font-medium text-slate-900 hover:underline">Admin login</Link>
+          <Link href="/login" className="font-medium text-slate-900 hover:underline">Admin kirishi</Link>
         </div>
       </Card>
     </main>

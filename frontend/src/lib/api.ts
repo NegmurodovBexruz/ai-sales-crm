@@ -49,11 +49,11 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
   if (response.status === 401) {
     clearToken();
     if (typeof window !== "undefined") window.location.href = "/login";
-    throw new Error("Session expired. Please log in again.");
+    throw new Error("Sessiya tugadi. Iltimos, qayta kiring.");
   }
 
   if (!response.ok) {
-    let message: unknown = "Request failed";
+    let message: unknown = "So‘rov bajarilmadi";
     try {
       const body = await response.json();
       message = body.detail || body.message || message;
@@ -87,11 +87,11 @@ async function operatorRequest<T>(path: string, options: OperatorRequestOptions 
   if (response.status === 401) {
     clearOperatorToken();
     if (typeof window !== "undefined") window.location.href = "/operator-login";
-    throw new Error("Operator session expired. Please log in again.");
+    throw new Error("Operator sessiyasi tugadi. Iltimos, qayta kiring.");
   }
 
   if (!response.ok) {
-    let message: unknown = "Request failed";
+    let message: unknown = "So‘rov bajarilmadi";
     try {
       const body = await response.json();
       message = body.detail || body.message || message;
@@ -278,3 +278,4 @@ export function formatDate(value?: string | null) {
     minute: "2-digit"
   }).format(new Date(value));
 }
+

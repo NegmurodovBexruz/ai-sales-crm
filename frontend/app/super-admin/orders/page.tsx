@@ -25,7 +25,7 @@ export default function SuperAdminOrdersPage() {
         status: status || undefined
       }));
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load orders");
+      setError(err instanceof Error ? err.message : "Buyurtmalarni yuklab bo‘lmadi");
     } finally {
       setLoading(false);
     }
@@ -40,16 +40,16 @@ export default function SuperAdminOrdersPage() {
 
   return (
     <div>
-      <PageHeader title="Orders" description="All orders across all businesses." />
+      <PageHeader title="Buyurtmalar" description="Barcha bizneslardagi buyurtmalar." />
       <ErrorMessage message={error} />
       <Card>
         <form onSubmit={onFilter} className="mb-4 grid gap-2 md:grid-cols-[1fr_1fr_auto]">
-          <Input value={businessId} onChange={(event) => setBusinessId(event.target.value)} placeholder="Business ID" />
-          <Input value={status} onChange={(event) => setStatus(event.target.value)} placeholder="Status" />
-          <Button>Filter</Button>
+          <Input value={businessId} onChange={(event) => setBusinessId(event.target.value)} placeholder="Biznes ID" />
+          <Input value={status} onChange={(event) => setStatus(event.target.value)} placeholder="Holat" />
+          <Button>Filtrlash</Button>
         </form>
         <AdminTable
-          headers={["Order ID", "Business", "Customer", "Phone", "Product", "Quantity", "Total price", "Status", "Created"]}
+          headers={["Buyurtma ID", "Biznes", "Mijoz", "Telefon", "Mahsulot", "Soni", "Umumiy narx", "Holat", "Yaratilgan"]}
           rows={orders.map((order) => [
             `#${order.id}`,
             `${order.business_name} (#${order.business_id})`,

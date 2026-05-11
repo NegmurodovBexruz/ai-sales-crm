@@ -64,7 +64,7 @@ export default function SettingsPage() {
           setTelegramStatus(await api.telegramStatus(data.business.id));
         }
       })
-      .catch((err) => setError(err instanceof Error ? err.message : "Failed to load business"))
+      .catch((err) => setError(err instanceof Error ? err.message : "Biznesni yuklab bo‘lmadi"))
       .finally(() => setLoading(false));
   }, []);
 
@@ -77,9 +77,9 @@ export default function SettingsPage() {
     try {
       const updated = await api.updateBusiness(business.id, form);
       applyBusiness(updated);
-      setMessage("Settings saved.");
+      setMessage("Sozlamalar saqlandi.");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to save settings");
+      setError(err instanceof Error ? err.message : "Sozlamalarni saqlab bo‘lmadi");
     } finally {
       setSaving(false);
     }
@@ -88,7 +88,7 @@ export default function SettingsPage() {
   async function onFileChange(file?: File) {
     if (!business || !file) return;
     if (!file.name.toLowerCase().endsWith(".docx")) {
-      setError("Please upload a .docx file.");
+      setError("Iltimos, .docx fayl yuklang.");
       return;
     }
     setUploading(true);
@@ -97,9 +97,9 @@ export default function SettingsPage() {
     try {
       const updated = await api.uploadKnowledgeDocx(business.id, file);
       applyBusiness(updated);
-      setMessage("Knowledge document uploaded.");
+      setMessage("Bilim hujjati yuklandi.");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to upload document");
+      setError(err instanceof Error ? err.message : "Hujjatni yuklab bo‘lmadi");
     } finally {
       setUploading(false);
     }
@@ -108,7 +108,7 @@ export default function SettingsPage() {
   async function copyCode(value?: string | null) {
     if (!value) return;
     await navigator.clipboard.writeText(value);
-    setMessage("Copied.");
+    setMessage("Nusxalandi.");
   }
 
   async function saveTelegramToken() {
@@ -120,9 +120,9 @@ export default function SettingsPage() {
       const status = await api.saveTelegramToken(business.id, telegramToken);
       setTelegramStatus(status);
       setTelegramToken("");
-      setMessage("Telegram token saved.");
+      setMessage("Telegram token saqlandi.");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to save Telegram token");
+      setError(err instanceof Error ? err.message : "Telegram tokenni saqlab bo‘lmadi");
     } finally {
       setSavingTelegram(false);
     }
@@ -136,9 +136,9 @@ export default function SettingsPage() {
     try {
       const status = await api.setTelegramWebhook(business.id);
       setTelegramStatus(status);
-      setMessage("Telegram webhook set.");
+      setMessage("Telegram webhook o‘rnatildi.");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to set Telegram webhook");
+      setError(err instanceof Error ? err.message : "Telegram webhookni o‘rnatib bo‘lmadi");
     } finally {
       setSettingWebhook(false);
     }
@@ -151,7 +151,7 @@ export default function SettingsPage() {
           <div className="text-xs uppercase text-slate-500">{label}</div>
           <div className="font-mono text-sm font-medium text-slate-950">{value || "-"}</div>
         </div>
-        <Button type="button" disabled={!value} onClick={() => copyCode(value)}>Copy</Button>
+        <Button type="button" disabled={!value} onClick={() => copyCode(value)}>Nusxalash</Button>
       </div>
     );
   }
@@ -159,50 +159,50 @@ export default function SettingsPage() {
   return (
     <section className="space-y-4">
       <div>
-        <h1 className="text-2xl font-semibold text-slate-950">Settings</h1>
-        <p className="text-sm text-slate-500">Manage business profile and AI knowledge.</p>
+        <h1 className="text-2xl font-semibold text-slate-950">Sozlamalar</h1>
+        <p className="text-sm text-slate-500">Biznes profili va AI bilimlarini boshqaring.</p>
       </div>
       <ErrorMessage message={error} />
       {message && <div className="rounded-md border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-700">{message}</div>}
-      {loading ? <LoadingState /> : !business ? <EmptyState label="No business found for this account." /> : (
+      {loading ? <LoadingState /> : !business ? <EmptyState label="Bu akkaunt uchun biznes topilmadi." /> : (
         <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_420px]">
           <Card>
             <form onSubmit={onSubmit} className="grid gap-4 lg:grid-cols-2">
               {!isOwner && (
                 <div className="lg:col-span-2 rounded-md border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
-                  Only the business owner can edit profile settings.
+                  Faqat biznes owner profil sozlamalarini tahrirlay oladi.
                 </div>
               )}
               <div>
-                <Label>Name</Label>
+                <Label>Biznes nomi</Label>
                 <Input value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} required disabled={!isOwner} />
               </div>
               <div>
-                <Label>Phone</Label>
+                <Label>Telefon</Label>
                 <Input value={form.phone} onChange={(event) => setForm({ ...form, phone: event.target.value })} disabled={!isOwner} />
               </div>
               <div>
-                <Label>Working hours</Label>
+                <Label>Ish vaqti</Label>
                 <Input value={form.working_hours} onChange={(event) => setForm({ ...form, working_hours: event.target.value })} disabled={!isOwner} />
               </div>
               <div>
                 <Label>AI tone</Label>
-                <Input value={form.ai_tone} onChange={(event) => setForm({ ...form, ai_tone: event.target.value })} placeholder="friendly, formal, short" disabled={!isOwner} />
+                <Input value={form.ai_tone} onChange={(event) => setForm({ ...form, ai_tone: event.target.value })} placeholder="samimiy, rasmiy, qisqa" disabled={!isOwner} />
               </div>
               <div className="lg:col-span-2">
-                <Label>Description</Label>
+                <Label>Biznes tavsifi</Label>
                 <Textarea value={form.description} onChange={(event) => setForm({ ...form, description: event.target.value })} disabled={!isOwner} />
               </div>
               <div className="lg:col-span-2">
-                <Label>Delivery policy</Label>
+                <Label>Yetkazib berish qoidasi</Label>
                 <Textarea value={form.delivery_policy} onChange={(event) => setForm({ ...form, delivery_policy: event.target.value })} disabled={!isOwner} />
               </div>
               <div className="lg:col-span-2">
-                <Label>Return policy</Label>
+                <Label>Qaytarish qoidasi</Label>
                 <Textarea value={form.return_policy} onChange={(event) => setForm({ ...form, return_policy: event.target.value })} disabled={!isOwner} />
               </div>
               <div className="lg:col-span-2">
-                <Button disabled={saving || !isOwner}>{saving ? "Saving..." : "Save settings"}</Button>
+                <Button disabled={saving || !isOwner}>{saving ? "Saqlanmoqda..." : "Saqlash"}</Button>
               </div>
             </form>
           </Card>
@@ -211,66 +211,66 @@ export default function SettingsPage() {
               <Card>
                 <h2 className="text-lg font-semibold text-slate-950">Telegram Bot</h2>
                 <div className="mt-4 space-y-3 text-sm">
-                  <p className="text-slate-500">Create a bot using BotFather and paste the token here.</p>
+                  <p className="text-slate-500">BotFather orqali bot yarating va tokenni shu yerga kiriting.</p>
                   <div>
                     <Label>Telegram bot token</Label>
                     <Input
                       type="password"
                       value={telegramToken}
                       onChange={(event) => setTelegramToken(event.target.value)}
-                      placeholder={telegramStatus?.has_token ? "Token connected" : "123456:ABC..."}
+                      placeholder={telegramStatus?.has_token ? "Token ulangan" : "123456:ABC..."}
                     />
                   </div>
-                  <p className="text-slate-500">After saving token, click Set Webhook.</p>
+                  <p className="text-slate-500">Token saqlangandan keyin Webhook o‘rnatish tugmasini bosing.</p>
                   <div className="flex flex-wrap gap-2">
                     <Button type="button" disabled={savingTelegram || !telegramToken.trim()} onClick={saveTelegramToken}>
-                      {savingTelegram ? "Saving..." : "Save token"}
+                      {savingTelegram ? "Saqlanmoqda..." : "Tokenni saqlash"}
                     </Button>
                     <Button type="button" disabled={settingWebhook || !telegramStatus?.has_token} onClick={setWebhook}>
-                      {settingWebhook ? "Setting..." : "Set Webhook"}
+                      {settingWebhook ? "O‘rnatilmoqda..." : "Webhook o‘rnatish"}
                     </Button>
                   </div>
                   <div className="rounded-md border border-slate-200 bg-slate-50 p-3">
-                    <div className="text-slate-500">Webhook status</div>
-                    <div className="mt-1 font-medium text-slate-950">{telegramStatus?.webhook_set ? "Webhook set" : "Webhook not set"}</div>
+                    <div className="text-slate-500">Webhook holati</div>
+                    <div className="mt-1 font-medium text-slate-950">{telegramStatus?.webhook_set ? "Webhook o‘rnatilgan" : "Webhook o‘rnatilmagan"}</div>
                     <div className="mt-2 text-slate-500">Token</div>
-                    <div className="font-medium text-slate-950">{telegramStatus?.has_token ? "Token connected" : "No token connected"}</div>
+                    <div className="font-medium text-slate-950">{telegramStatus?.has_token ? "Token ulangan" : "Token ulanmagan"}</div>
                     <div className="mt-2 text-slate-500">Webhook URL</div>
-                    <div className="break-all font-mono text-xs text-slate-700">{telegramStatus?.webhook_url || "BACKEND_URL is not configured"}</div>
+                    <div className="break-all font-mono text-xs text-slate-700">{telegramStatus?.webhook_url || "BACKEND_URL sozlanmagan"}</div>
                   </div>
                 </div>
               </Card>
             )}
           <Card>
-            <h2 className="text-lg font-semibold text-slate-950">Business access</h2>
+            <h2 className="text-lg font-semibold text-slate-950">Biznesga kirish</h2>
             <div className="mt-4 space-y-3">
-              <AccessCodeRow label="Public business ID" value={business.public_business_id} />
+              <AccessCodeRow label="Public biznes ID" value={business.public_business_id} />
               <AccessCodeRow label="Admin join code" value={business.admin_join_code} />
               <AccessCodeRow label="Operator code" value={business.operator_code} />
             </div>
           </Card>
           <Card>
-            <h2 className="text-lg font-semibold text-slate-950">Knowledge document</h2>
+            <h2 className="text-lg font-semibold text-slate-950">Bilim hujjati</h2>
             <div className="mt-4 space-y-3 text-sm">
               <div>
-                <div className="text-slate-500">File</div>
-                <div className="font-medium text-slate-950">{business.knowledge_file_name || "No file uploaded"}</div>
+                <div className="text-slate-500">Fayl</div>
+                <div className="font-medium text-slate-950">{business.knowledge_file_name || "Fayl yuklanmagan"}</div>
               </div>
               <div>
-                <div className="text-slate-500">Uploaded</div>
+                <div className="text-slate-500">Yuklangan vaqt</div>
                 <div className="font-medium text-slate-950">{formatDate(business.knowledge_uploaded_at)}</div>
               </div>
               <div>
-                <Label>Upload .docx</Label>
+                <Label>DOCX yuklash</Label>
                 <Input type="file" accept=".docx" disabled={uploading || !isOwner} onChange={(event) => onFileChange(event.target.files?.[0])} />
               </div>
               <div>
-                <div className="mb-1 text-slate-500">Preview</div>
+                <div className="mb-1 text-slate-500">Ko‘rib chiqish</div>
                 <div className="max-h-80 overflow-y-auto whitespace-pre-wrap rounded-md border border-slate-200 bg-slate-50 p-3 text-slate-700">
-                  {business.business_knowledge_text || "No extracted knowledge text yet."}
+                  {business.business_knowledge_text || "Hali ajratilgan bilim matni yo‘q."}
                 </div>
               </div>
-              {uploading && <div className="text-slate-500">Uploading...</div>}
+              {uploading && <div className="text-slate-500">Yuklanmoqda...</div>}
             </div>
           </Card>
           </div>

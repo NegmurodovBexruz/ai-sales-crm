@@ -1,14 +1,14 @@
-import sys
+﻿import sys
 from pathlib import Path
 
 ROOT_DIR = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT_DIR))
+sys.path.insert(0, str(ROOT_DIR / "backend"))
 
 from sqlalchemy import select  # noqa: E402
 
-from backend.app.db.session import SessionLocal  # noqa: E402
-from backend.app.models.business import Business  # noqa: E402
-from backend.app.utils.business_ids import (  # noqa: E402
+from app.db.session import SessionLocal  # noqa: E402
+from app.models.business import Business  # noqa: E402
+from app.utils.business_ids import (  # noqa: E402
     generate_admin_join_code,
     generate_operator_code,
     generate_public_business_id,
@@ -49,3 +49,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+

@@ -50,7 +50,7 @@ export default function ProductsPage() {
 
   useEffect(() => {
     loadData()
-      .catch((err) => setError(err instanceof Error ? err.message : "Failed to load products"))
+      .catch((err) => setError(err instanceof Error ? err.message : "Mahsulotlarni yuklab bo‘lmadi"))
       .finally(() => setLoading(false));
   }, []);
 
@@ -71,7 +71,7 @@ export default function ProductsPage() {
   async function onSubmit(event: FormEvent) {
     event.preventDefault();
     if (!business) {
-      setError("Create a business first before adding products.");
+      setError("Mahsulot qo‘shishdan oldin biznes yarating.");
       return;
     }
     setSaving(true);
@@ -97,7 +97,7 @@ export default function ProductsPage() {
       setEditingId(null);
       await loadData();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to save product");
+      setError(err instanceof Error ? err.message : "Mahsulotni saqlab bo‘lmadi");
     } finally {
       setSaving(false);
     }
@@ -109,68 +109,68 @@ export default function ProductsPage() {
       await action();
       await loadData();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Action failed");
+      setError(err instanceof Error ? err.message : "Amal bajarilmadi");
     }
   }
 
   return (
     <section className="space-y-4">
       <div>
-        <h1 className="text-2xl font-semibold text-slate-950">Products</h1>
-        <p className="text-sm text-slate-500">Manage catalog items and stock counts.</p>
+        <h1 className="text-2xl font-semibold text-slate-950">Mahsulotlar</h1>
+        <p className="text-sm text-slate-500">Katalog mahsulotlari va ombor sonini boshqaring.</p>
       </div>
       <ErrorMessage message={error} />
       <Card>
         <form onSubmit={onSubmit} className="grid gap-4 lg:grid-cols-4">
           <div>
-            <Label>Name</Label>
+            <Label>Nomi</Label>
             <Input value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} required />
           </div>
           <div>
-            <Label>Category</Label>
+            <Label>Kategoriya</Label>
             <Input value={form.category} onChange={(event) => setForm({ ...form, category: event.target.value })} />
           </div>
           <div>
-            <Label>Price</Label>
+            <Label>Narx</Label>
             <Input type="number" min="0" step="0.01" value={form.price} onChange={(event) => setForm({ ...form, price: event.target.value })} required />
           </div>
           <div>
-            <Label>Discount price</Label>
+            <Label>Chegirma narxi</Label>
             <Input type="number" min="0" step="0.01" value={form.discount_price} onChange={(event) => setForm({ ...form, discount_price: event.target.value })} />
           </div>
           <div>
-            <Label>Stock count</Label>
+            <Label>Ombordagi soni</Label>
             <Input type="number" min="0" value={form.stock_count} onChange={(event) => setForm({ ...form, stock_count: event.target.value })} />
           </div>
           <div>
-            <Label>Image URL</Label>
+            <Label>Rasm URL</Label>
             <Input value={form.image_url} onChange={(event) => setForm({ ...form, image_url: event.target.value })} />
           </div>
           <div>
             <Label>Tags</Label>
-            <Input value={form.tags} onChange={(event) => setForm({ ...form, tags: event.target.value })} placeholder="comma separated" />
+            <Input value={form.tags} onChange={(event) => setForm({ ...form, tags: event.target.value })} placeholder="vergul bilan ajrating" />
           </div>
           <div className="lg:col-span-4">
-            <Label>Description</Label>
+            <Label>Tavsif</Label>
             <Textarea value={form.description} onChange={(event) => setForm({ ...form, description: event.target.value })} />
           </div>
           <div className="flex gap-2 lg:col-span-4">
-            <Button disabled={saving}>{saving ? "Saving..." : editingId ? "Save changes" : "Add product"}</Button>
-            {editingId && <SecondaryButton type="button" onClick={() => { setEditingId(null); setForm(emptyForm); }}>Cancel edit</SecondaryButton>}
+            <Button disabled={saving}>{saving ? "Saqlanmoqda..." : editingId ? "O‘zgarishlarni saqlash" : "Mahsulot qo‘shish"}</Button>
+            {editingId && <SecondaryButton type="button" onClick={() => { setEditingId(null); setForm(emptyForm); }}>Tahrirlashni bekor qilish</SecondaryButton>}
           </div>
         </form>
       </Card>
-      {loading ? <LoadingState /> : products.length === 0 ? <EmptyState label="No products yet." /> : (
+      {loading ? <LoadingState /> : products.length === 0 ? <EmptyState label="Hali mahsulot yo‘q." /> : (
         <Card className="overflow-x-auto p-0">
           <table className="w-full min-w-[900px] text-left text-sm">
             <thead className="border-b bg-slate-50 text-slate-500">
               <tr>
-                <th className="p-3">Product</th>
-                <th className="p-3">Category</th>
-                <th className="p-3">Price</th>
-                <th className="p-3">Stock</th>
-                <th className="p-3">Status</th>
-                <th className="p-3">Actions</th>
+                <th className="p-3">Mahsulot</th>
+                <th className="p-3">Kategoriya</th>
+                <th className="p-3">Narx</th>
+                <th className="p-3">Ombor</th>
+                <th className="p-3">Holati</th>
+                <th className="p-3">Amallar</th>
               </tr>
             </thead>
             <tbody>
@@ -192,10 +192,10 @@ export default function ProductsPage() {
                     <td className="p-3"><Badge tone={status.tone}>{status.label}</Badge></td>
                     <td className="p-3">
                       <div className="flex flex-wrap gap-2">
-                        <SecondaryButton onClick={() => mutate(() => api.increaseStock(product.id))}>+ Stock</SecondaryButton>
-                        <SecondaryButton onClick={() => mutate(() => api.decreaseStock(product.id))}>- Stock</SecondaryButton>
-                        <SecondaryButton onClick={() => startEdit(product)}>Edit</SecondaryButton>
-                        <DangerButton onClick={() => mutate(() => api.deleteProduct(product.id))}>Delete</DangerButton>
+                        <SecondaryButton onClick={() => mutate(() => api.increaseStock(product.id))}>+ Ombor</SecondaryButton>
+                        <SecondaryButton onClick={() => mutate(() => api.decreaseStock(product.id))}>- Ombor</SecondaryButton>
+                        <SecondaryButton onClick={() => startEdit(product)}>Tahrirlash</SecondaryButton>
+                        <DangerButton onClick={() => mutate(() => api.deleteProduct(product.id))}>O‘chirish</DangerButton>
                       </div>
                     </td>
                   </tr>

@@ -22,7 +22,7 @@ export default function SuperAdminUsersPage() {
     try {
       setUsers(await api.superAdminUsers({ search: search || undefined, global_role: globalRole || undefined }));
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load users");
+      setError(err instanceof Error ? err.message : "Foydalanuvchilarni yuklab bo‘lmadi");
     } finally {
       setLoading(false);
     }
@@ -37,20 +37,20 @@ export default function SuperAdminUsersPage() {
 
   return (
     <div>
-      <PageHeader title="Users" description="Manage global user access and roles." />
+      <PageHeader title="Foydalanuvchilar" description="Global kirish huquqlari va rollarni boshqaring." />
       <ErrorMessage message={error} />
       <Card>
         <form onSubmit={onSearch} className="mb-4 grid gap-2 md:grid-cols-[1fr_180px_auto]">
-          <Input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search email or name" />
+          <Input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Email yoki ism bo‘yicha qidirish" />
           <select value={globalRole} onChange={(event) => setGlobalRole(event.target.value)} className="h-10 rounded-md border border-slate-300 bg-white px-3 text-sm">
-            <option value="">All roles</option>
-            <option value="user">User</option>
+            <option value="">Barcha rollar</option>
+            <option value="user">Foydalanuvchi</option>
             <option value="super_admin">Super admin</option>
           </select>
-          <Button>Search</Button>
+          <Button>Qidirish</Button>
         </form>
         <AdminTable
-          headers={["ID", "Email", "Full name", "Global role", "Businesses", "Created", "Status", "Actions"]}
+          headers={["ID", "Email", "To‘liq ism", "Global rol", "Bizneslar", "Yaratilgan", "Holati", "Amallar"]}
           rows={users.map((user) => [
             user.id,
             user.email,

@@ -15,7 +15,7 @@ export function PageHeader({ title, description }: { title: string; description:
 
 export function SearchBar({
   value,
-  placeholder = "Search",
+  placeholder = "Qidirish",
   onChange,
   onSubmit
 }: {
@@ -27,13 +27,13 @@ export function SearchBar({
   return (
     <form onSubmit={onSubmit} className="mb-4 flex max-w-md gap-2">
       <Input value={value} onChange={(event) => onChange(event.target.value)} placeholder={placeholder} />
-      <Button>Search</Button>
+      <Button>Qidirish</Button>
     </form>
   );
 }
 
 export function AdminTable({ headers, rows }: { headers: string[]; rows: React.ReactNode[][] }) {
-  if (!rows.length) return <EmptyState label="No records found." />;
+  if (!rows.length) return <EmptyState label="Ma’lumot topilmadi." />;
   return (
     <div className="overflow-x-auto">
       <table className="w-full min-w-[860px] text-left text-sm">
@@ -57,11 +57,11 @@ export function AdminTable({ headers, rows }: { headers: string[]; rows: React.R
 export function ViewLink({ href }: { href: string }) {
   return (
     <Link href={href} className="inline-flex h-8 items-center rounded-md border border-slate-300 bg-white px-3 text-xs font-medium text-slate-700 hover:bg-slate-50">
-      View
+      Ko‘rish
     </Link>
   );
 }
 
 export function StatusText({ active }: { active: boolean }) {
-  return <span className={active ? "text-emerald-700" : "text-red-700"}>{active ? "active" : "inactive"}</span>;
+  return <span className={active ? "text-emerald-700" : "text-red-700"}>{active ? "aktiv" : "noaktiv"}</span>;
 }

@@ -3,6 +3,7 @@ import logging
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.core.config import settings
 from app.models.telegram_operator import TelegramOperator
 
 logger = logging.getLogger(__name__)
@@ -24,7 +25,13 @@ async def notify_business_operators(
         ).all()
     )
     chat_ids = [operator.telegram_chat_id for operator in operators]
-    if not chat_ids:
+    if not chat_ids and settings.TELEGRAM_ADMIN_CHAT_ID:
+        logger.warning(
+            "No active Telegram operators configured for business_id=%s; using TELEGRAM_ADMIN_CHAT_ID fallback",
+            business_id,
+        )
+        chat_ids = [settings.TELEGRAM_ADMIN_CHAT_ID]
+    elif not chat_ids:
         logger.warning("No active Telegram operators configured for business_id=%s", business_id)
         return 0
 

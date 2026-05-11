@@ -5,12 +5,12 @@ from sqlalchemy.orm import selectinload
 from app.api.access import get_accessible_business_ids, require_business_admin_or_owner
 from app.api.deps import CurrentUser, DbSession
 from app.models.order import Order, OrderItem
-from app.models.product import Product
 from app.schemas.order import OrderDoneResponse, OrderRead, OrderStatusUpdate
 from app.services.order_service import (
     InsufficientStockError,
     OrderBusinessMismatchError,
     OrderNotFoundError,
+    cancel_order,
     mark_order_done,
 )
 from app.services.operator_assignment_service import cancel_assignment_by_order, complete_assignment_by_order
@@ -75,11 +75,22 @@ def update_order_status(
     order = get_accessible_order(db, order_id, current_user)
     if payload.status not in {"new", "done", "cancelled"}:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Unsupported order status")
-    order.status = payload.status
-    db.commit()
-    db.refresh(order)
-    if order.status == "cancelled":
-        cancel_assignment_by_order(db, order.id)
-    elif order.status == "done":
+
+    if payload.status == "done":
+        try:
+            order = mark_order_done(db, order_id, business_id=order.business_id)
+        except InsufficientStockError as exc:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
         complete_assignment_by_order(db, order.id)
+        return order
+
+    if payload.status == "cancelled":
+        order = cancel_order(db, order_id, business_id=order.business_id)
+        cancel_assignment_by_order(db, order.id)
+        return order
+
+    if order.status != "done":
+        order.status = "new"
+        db.commit()
+        db.refresh(order)
     return order

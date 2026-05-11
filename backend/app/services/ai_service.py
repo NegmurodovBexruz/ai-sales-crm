@@ -1,4 +1,4 @@
-import asyncio
+﻿import asyncio
 import json
 from decimal import Decimal
 from json import JSONDecodeError
@@ -7,6 +7,7 @@ from typing import Any
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.bot.i18n import t
 from app.core.config import settings
 from app.models.ai_log import AILog
 from app.models.business import Business
@@ -27,13 +28,6 @@ VALID_INTENTS = {
     "irrelevant",
     "unknown",
 }
-
-FALLBACK_MESSAGES = {
-    "uz_latin": "Hozir bu savolga aniq javob bera olmadim. Operator sizga yordam beradi.",
-    "uz_cyrillic": "Ҳозир бу саволга аниқ жавоб бера олмадим. Оператор сизга ёрдам беради.",
-    "ru": "Сейчас я не смог точно ответить на этот вопрос. Оператор вам поможет.",
-}
-
 
 class AIServiceNotFoundError(Exception):
     pass
@@ -152,7 +146,11 @@ class AIService:
             "Rules:\n"
             "- Answer only using the product catalog and business_knowledge_text/policies below.\n"
             "- Do not invent prices, stock, delivery rules, return rules, or product data.\n"
-            "- Reply in the customer's selected language.\n"
+            "- Reply only in the customer's selected language.\n"
+            "- If customer.language is uz_latin, reply in Uzbek Latin only.\n"
+            "- If customer.language is uz_cyrillic, reply in Uzbek Cyrillic only.\n"
+            "- If customer.language is ru, reply in Russian only.\n"
+            "- Do not mix languages in one reply.\n"
             "- If stock_count is 0, do not say the product is available.\n"
             "- If stock_count is 1-10, mention low stock when relevant.\n"
             "- If discount_price exists, mention the discount price.\n"
@@ -273,7 +271,7 @@ class AIService:
 
     def _fallback_response(self, language: str) -> dict[str, Any]:
         return {
-            "reply": FALLBACK_MESSAGES.get(language, FALLBACK_MESSAGES["uz_latin"]),
+            "reply": t(language, "ai_fallback"),
             "intent": "unknown",
             "lead_score": 0,
             "recommended_product_ids": [],
@@ -330,3 +328,4 @@ class AIService:
 
 
 ai_service = AIService()
+

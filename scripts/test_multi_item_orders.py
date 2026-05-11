@@ -1,4 +1,4 @@
-import sys
+﻿import sys
 from decimal import Decimal
 from pathlib import Path
 
@@ -6,13 +6,13 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 ROOT_DIR = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT_DIR))
+sys.path.insert(0, str(ROOT_DIR / "backend"))
 
-from backend.app.bot.keyboards import cart_review_keyboard, category_keyboard, product_keyboard  # noqa: E402
-from backend.app.bot.handlers.messages import get_available_categories, get_available_products_for_category  # noqa: E402
-from backend.app.db.base import Base  # noqa: E402
-from backend.app.models import Business, Customer, Product, User  # noqa: E402
-from backend.app.services.order_service import (  # noqa: E402
+from app.bot.keyboards import cart_review_keyboard, category_keyboard, product_keyboard  # noqa: E402
+from app.bot.handlers.messages import get_available_categories, get_available_products_for_category  # noqa: E402
+from app.db.base import Base  # noqa: E402
+from app.models import Business, Customer, Product, User  # noqa: E402
+from app.services.order_service import (  # noqa: E402
     InsufficientStockError,
     create_order_with_items,
     mark_order_done,
@@ -157,7 +157,7 @@ def test_done_insufficient_stock_does_not_decrease_any_product():
 
 def test_order_keyboards_have_expected_navigation_buttons():
     categories = category_keyboard([("Shoes", "Shoes")], "uz_latin")
-    products = product_keyboard([("Nike Air Max — 790 000 so'm", 1)], "uz_latin")
+    products = product_keyboard([("Nike Air Max - 790 000 so‘m", 1)], "uz_latin")
     cart = cart_review_keyboard("uz_latin")
 
     assert categories.inline_keyboard[-1][0].callback_data == "order_cancel_full"
@@ -192,3 +192,4 @@ if __name__ == "__main__":
     test_order_keyboards_have_expected_navigation_buttons()
     test_category_and_product_helpers_only_show_available_products()
     print("multi item order tests passed")
+

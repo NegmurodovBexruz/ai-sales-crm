@@ -8,7 +8,7 @@ import { isOperatorAuthenticated, operatorLogout } from "@/lib/auth";
 import type { OperatorMe } from "@/lib/types";
 import { SecondaryButton } from "@/components/ui";
 
-const links = [{ href: "/operator-dashboard/products", label: "Products" }];
+const links = [{ href: "/operator-dashboard/products", label: "Mahsulotlar" }];
 
 export function OperatorDashboardShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -34,7 +34,7 @@ export function OperatorDashboardShell({ children }: { children: React.ReactNode
   if (checkingAuth) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-slate-50 text-sm text-slate-500">
-        Loading operator dashboard...
+        Operator paneli yuklanmoqda...
       </div>
     );
   }
@@ -44,7 +44,7 @@ export function OperatorDashboardShell({ children }: { children: React.ReactNode
       <aside className="fixed inset-y-0 left-0 hidden w-64 border-r border-slate-200 bg-white p-4 md:block">
         <div className="mb-6">
           <div className="text-lg font-semibold text-slate-950">AI Sales CRM</div>
-          <div className="text-sm text-slate-500">Operator dashboard</div>
+          <div className="text-sm text-slate-500">Operator paneli</div>
         </div>
         <nav className="space-y-1">
           {links.map((link) => {
@@ -68,7 +68,7 @@ export function OperatorDashboardShell({ children }: { children: React.ReactNode
         <header className="sticky top-0 z-10 border-b border-slate-200 bg-white">
           <div className="flex min-h-16 items-center justify-between gap-3 px-4 md:px-6">
             <div>
-              <div className="text-sm text-slate-500">{operatorState?.business.name ?? "Business"}</div>
+              <div className="text-sm text-slate-500">{operatorState?.business.name ?? "Biznes"}</div>
               <div className="text-sm font-medium text-slate-900">{operatorState?.operator.name ?? "Operator"}</div>
             </div>
             <div className="flex items-center gap-2">
@@ -79,7 +79,7 @@ export function OperatorDashboardShell({ children }: { children: React.ReactNode
                   </Link>
                 ))}
               </nav>
-              <SecondaryButton onClick={operatorLogout}>Logout</SecondaryButton>
+              <SecondaryButton onClick={operatorLogout}>Chiqish</SecondaryButton>
             </div>
           </div>
         </header>
