@@ -27,6 +27,7 @@ class Settings:
     TELEGRAM_BOT_TOKEN: str | None = os.getenv("TELEGRAM_BOT_TOKEN")
     TELEGRAM_WEBHOOK_SECRET: str | None = os.getenv("TELEGRAM_WEBHOOK_SECRET")
     DEFAULT_BUSINESS_ID: int | None = get_optional_int_env("DEFAULT_BUSINESS_ID")
+    BACKEND_URL: str | None = os.getenv("BACKEND_URL")
     AI_PROVIDER: str = os.getenv("AI_PROVIDER", "openai")
     OPENAI_API_KEY: str | None = os.getenv("OPENAI_API_KEY")
     OPENAI_MODEL: str | None = os.getenv("OPENAI_MODEL")

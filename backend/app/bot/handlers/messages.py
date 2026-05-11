@@ -25,6 +25,7 @@ from app.bot.keyboards import (
     start_order_keyboard,
 )
 from app.bot.handlers.start import get_telegram_identity
+from app.bot.context import get_telegram_business_id
 from app.bot.states.order import OrderStates
 from app.core.config import settings
 from app.db.session import SessionLocal
@@ -196,7 +197,10 @@ NO_COMMENT_WORDS = {"yo‘q", "yo'q", "йўқ", "нет", "no", "-"}
 
 
 def get_configured_business(db) -> Business | None:
-    if settings.DEFAULT_BUSINESS_ID is None:
+    business_id = get_telegram_business_id()
+    if business_id is not None:
+        return db.scalar(select(Business).where(Business.id == business_id))
+    if settings.APP_ENV == "production" or settings.DEFAULT_BUSINESS_ID is None:
         return None
     return db.scalar(select(Business).where(Business.id == settings.DEFAULT_BUSINESS_ID))
 

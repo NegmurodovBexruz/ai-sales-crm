@@ -49,10 +49,10 @@ export default function MembersPage() {
       {loading ? <LoadingState /> : !business || !members ? <EmptyState label="No business found." /> : (
         <>
           <Card>
-            <div className="text-sm text-slate-500">Public business ID</div>
+            <div className="text-sm text-slate-500">Admin join code</div>
             <div className="mt-2 flex flex-wrap items-center gap-3">
-              <code className="rounded-md bg-slate-100 px-3 py-2 text-lg font-semibold text-slate-950">{business.public_business_id}</code>
-              <SecondaryButton onClick={() => navigator.clipboard.writeText(business.public_business_id)}>Copy</SecondaryButton>
+              <code className="rounded-md bg-slate-100 px-3 py-2 text-lg font-semibold text-slate-950">{business.admin_join_code || "-"}</code>
+              <SecondaryButton disabled={!business.admin_join_code} onClick={() => business.admin_join_code && navigator.clipboard.writeText(business.admin_join_code)}>Copy</SecondaryButton>
             </div>
           </Card>
           <Card>

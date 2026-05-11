@@ -40,15 +40,12 @@ def get_owner_business_id(db: DbSession, current_user: CurrentUser, business_id:
 
 @router.post("/join-request", response_model=JoinRequestResponse, status_code=status.HTTP_201_CREATED)
 def create_join_request(payload: JoinRequestCreate, db: DbSession, current_user: CurrentUser) -> dict:
-    if payload.admin_join_code:
-        business = db.scalar(select(Business).where(Business.admin_join_code == payload.admin_join_code))
-    elif payload.public_business_id:
-        business = db.scalar(select(Business).where(Business.public_business_id == payload.public_business_id))
-    else:
+    if not payload.admin_join_code:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="public_business_id or admin_join_code is required",
+            detail="admin_join_code is required",
         )
+    business = db.scalar(select(Business).where(Business.admin_join_code == payload.admin_join_code))
     if business is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Business not found")
 

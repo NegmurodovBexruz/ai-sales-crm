@@ -3,6 +3,7 @@ from aiogram.filters import CommandStart
 from aiogram.types import CallbackQuery, Message
 from sqlalchemy import select
 
+from app.bot.context import get_telegram_business_id
 from app.bot.keyboards import contact_request_keyboard, language_selection_keyboard
 from app.core.config import settings
 from app.db.session import SessionLocal
@@ -21,8 +22,13 @@ LANGUAGE_SELECTED_MESSAGES = {
 
 
 def get_default_business(db) -> Business | None:
-    if settings.DEFAULT_BUSINESS_ID is not None:
+    business_id = get_telegram_business_id()
+    if business_id is not None:
+        return db.scalar(select(Business).where(Business.id == business_id))
+    if settings.APP_ENV != "production" and settings.DEFAULT_BUSINESS_ID is not None:
         return db.scalar(select(Business).where(Business.id == settings.DEFAULT_BUSINESS_ID))
+    if settings.APP_ENV == "production":
+        return None
     return db.scalar(select(Business).order_by(Business.id.asc()).limit(1))
 
 

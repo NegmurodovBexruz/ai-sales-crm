@@ -14,7 +14,7 @@ export default function OnboardingPage() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [phone, setPhone] = useState("");
-  const [publicId, setPublicId] = useState("");
+  const [adminJoinCode, setAdminJoinCode] = useState("");
   const [notice, setNotice] = useState<{ title: string; message: string } | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -60,7 +60,7 @@ export default function OnboardingPage() {
     setError(null);
     setNotice(null);
     try {
-      const response = await api.joinBusiness(publicId.trim().toUpperCase());
+      const response = await api.joinBusiness(adminJoinCode.trim().toUpperCase());
       const alreadyPending = response.message?.toLowerCase().includes("already");
       setNotice({
         title: alreadyPending ? "Request yuborilgan" : "Request yuborildi",
@@ -83,7 +83,7 @@ export default function OnboardingPage() {
 
   function goInitial() {
     setMode(null);
-    setPublicId("");
+    setAdminJoinCode("");
     setError(null);
     setNotice(null);
   }
@@ -144,7 +144,7 @@ export default function OnboardingPage() {
               className="rounded-lg border border-slate-200 bg-white p-6 text-left shadow-sm transition hover:border-slate-400 hover:bg-slate-50"
             >
               <div className="text-lg font-semibold text-slate-950">Join as admin</div>
-              <div className="mt-2 text-sm text-slate-500">Request access using the owner-provided Business ID.</div>
+              <div className="mt-2 text-sm text-slate-500">Request access using the owner-provided admin join code.</div>
             </button>
           </div>
         )}
@@ -171,9 +171,9 @@ export default function OnboardingPage() {
         {mode === "join" && (
           <form onSubmit={joinBusiness} className="mt-6 space-y-4">
             <div>
-              <Label>Business ID</Label>
-              <Input value={publicId} onChange={(event) => setPublicId(event.target.value)} placeholder="BIZ-8KQ2M9" required />
-              <p className="mt-1 text-sm text-slate-500">Business ID ni business ownerdan oling.</p>
+              <Label>Admin join code</Label>
+              <Input value={adminJoinCode} onChange={(event) => setAdminJoinCode(event.target.value)} placeholder="ADM-8KQ2M9" required />
+              <p className="mt-1 text-sm text-slate-500">Admin join code ni business ownerdan oling.</p>
             </div>
             <div className="flex gap-2">
               <Button disabled={saving}>{saving ? "Sending..." : "Send request"}</Button>

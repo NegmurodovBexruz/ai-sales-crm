@@ -19,6 +19,7 @@ import type {
   SuperAdminStats,
   SuperAdminUserDetail,
   SuperAdminUserSummary,
+  TelegramStatus,
   TelegramOperator,
   User
 } from "@/lib/types";
@@ -140,6 +141,17 @@ export const api = {
       body: formData
     });
   },
+  telegramStatus: (businessId: number) =>
+    request<TelegramStatus>(`/api/businesses/${businessId}/telegram/status`),
+  saveTelegramToken: (businessId: number, telegramBotToken: string) =>
+    request<TelegramStatus>(`/api/businesses/${businessId}/telegram-token`, {
+      method: "PATCH",
+      body: JSON.stringify({ telegram_bot_token: telegramBotToken })
+    }),
+  setTelegramWebhook: (businessId: number) =>
+    request<TelegramStatus>(`/api/businesses/${businessId}/telegram/set-webhook`, {
+      method: "POST"
+    }),
   products: () => request<Product[]>("/api/products"),
   createProduct: (payload: Omit<Product, "id" | "availability_status" | "created_at" | "updated_at">) =>
     request<Product>("/api/products", {
@@ -183,10 +195,10 @@ export const api = {
       method: "POST",
       body: JSON.stringify(payload)
     }),
-  joinBusiness: (publicBusinessId: string) =>
+  joinBusiness: (adminJoinCode: string) =>
     request<{ message: string; membership: BusinessMember }>("/api/business-members/join-request", {
       method: "POST",
-      body: JSON.stringify({ public_business_id: publicBusinessId })
+      body: JSON.stringify({ admin_join_code: adminJoinCode })
     }),
   joinBusinessWithAdminCode: (adminJoinCode: string) =>
     request<{ message: string; membership: BusinessMember }>("/api/business-members/join-request", {

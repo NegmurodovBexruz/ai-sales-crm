@@ -1,14 +1,27 @@
 from datetime import datetime, timezone
+import json
+from secrets import token_urlsafe
+from urllib.error import HTTPError, URLError
+from urllib.request import Request, urlopen
 
 from fastapi import APIRouter, HTTPException, UploadFile, status
 from sqlalchemy import select
 from sqlalchemy.orm import joinedload
 
-from app.api.access import require_business_owner
+from app.api.access import require_business_admin_or_owner, require_business_owner
 from app.api.deps import CurrentUser, DbSession
+from app.core.config import settings
+from app.core.security import decrypt_secret, encrypt_secret
 from app.models.business import Business
 from app.models.business_member import BusinessMember
-from app.schemas.business import BusinessCreate, BusinessMeResponse, BusinessRead, BusinessUpdate
+from app.schemas.business import (
+    BusinessCreate,
+    BusinessMeResponse,
+    BusinessRead,
+    BusinessUpdate,
+    TelegramTokenStatus,
+    TelegramTokenUpdate,
+)
 from app.utils.business_ids import generate_admin_join_code, generate_operator_code, generate_public_business_id
 from app.utils.docx_parser import extract_text_from_docx
 
@@ -44,6 +57,39 @@ def business_read_payload(business: Business, include_admin_join_code: bool = Tr
         "updated_at": business.updated_at,
     }
     return payload
+
+
+def telegram_webhook_url(business: Business) -> str | None:
+    if not settings.BACKEND_URL:
+        return None
+    return f"{settings.BACKEND_URL.rstrip('/')}/api/telegram/webhook/{business.public_business_id}"
+
+
+def call_telegram_set_webhook(bot_token: str, webhook_url: str, secret_token: str | None) -> dict:
+    payload: dict[str, str] = {"url": webhook_url}
+    if secret_token:
+        payload["secret_token"] = secret_token
+    request = Request(
+        url=f"https://api.telegram.org/bot{bot_token}/setWebhook",
+        data=json.dumps(payload).encode("utf-8"),
+        headers={"Content-Type": "application/json"},
+        method="POST",
+    )
+    try:
+        with urlopen(request, timeout=15) as response:
+            data = json.loads(response.read().decode("utf-8"))
+    except HTTPError as exc:
+        detail = exc.read().decode("utf-8", errors="replace") or str(exc)
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Telegram setWebhook failed: {detail}") from exc
+    except URLError as exc:
+        raise HTTPException(status_code=status.HTTP_502_BAD_GATEWAY, detail=f"Telegram setWebhook failed: {exc.reason}") from exc
+
+    if not data.get("ok"):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=data.get("description") or "Telegram setWebhook failed",
+        )
+    return data
 
 
 @router.post("", response_model=BusinessRead, status_code=status.HTTP_201_CREATED)
@@ -162,3 +208,84 @@ async def upload_business_knowledge_docx(
     db.commit()
     db.refresh(business)
     return business
+
+
+@router.patch("/{business_id}/telegram-token", response_model=TelegramTokenStatus)
+def update_telegram_token(
+    business_id: int,
+    payload: TelegramTokenUpdate,
+    db: DbSession,
+    current_user: CurrentUser,
+) -> TelegramTokenStatus:
+    business = get_business_or_404(db, business_id)
+    require_business_admin_or_owner(db, current_user, business_id)
+
+    token = payload.telegram_bot_token.strip()
+    if not token:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Telegram bot token is required")
+
+    business.telegram_bot_token_encrypted = encrypt_secret(token)
+    business.telegram_webhook_set = False
+    if not business.telegram_webhook_secret:
+        business.telegram_webhook_secret = token_urlsafe(32)
+    db.commit()
+    db.refresh(business)
+
+    return TelegramTokenStatus(
+        has_token=True,
+        webhook_set=business.telegram_webhook_set,
+        webhook_url=telegram_webhook_url(business),
+        telegram_webhook_secret_exists=bool(business.telegram_webhook_secret),
+    )
+
+
+@router.post("/{business_id}/telegram/set-webhook", response_model=TelegramTokenStatus)
+def set_telegram_webhook(
+    business_id: int,
+    db: DbSession,
+    current_user: CurrentUser,
+) -> TelegramTokenStatus:
+    business = get_business_or_404(db, business_id)
+    require_business_admin_or_owner(db, current_user, business_id)
+
+    if not settings.BACKEND_URL:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="BACKEND_URL is not configured")
+    if not business.telegram_bot_token_encrypted:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Telegram bot token is not configured")
+
+    if not business.telegram_webhook_secret:
+        business.telegram_webhook_secret = token_urlsafe(32)
+        db.flush()
+
+    webhook_url = telegram_webhook_url(business)
+    if webhook_url is None:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="BACKEND_URL is not configured")
+
+    bot_token = decrypt_secret(business.telegram_bot_token_encrypted)
+    call_telegram_set_webhook(bot_token, webhook_url, business.telegram_webhook_secret)
+    business.telegram_webhook_set = True
+    db.commit()
+    db.refresh(business)
+
+    return TelegramTokenStatus(
+        has_token=True,
+        webhook_set=business.telegram_webhook_set,
+        webhook_url=webhook_url,
+        telegram_webhook_secret_exists=bool(business.telegram_webhook_secret),
+    )
+
+
+@router.get("/{business_id}/telegram/status", response_model=TelegramTokenStatus)
+def get_telegram_status(
+    business_id: int,
+    db: DbSession,
+    current_user: CurrentUser,
+) -> TelegramTokenStatus:
+    business = get_business_or_404(db, business_id)
+    require_business_admin_or_owner(db, current_user, business_id)
+    return TelegramTokenStatus(
+        has_token=bool(business.telegram_bot_token_encrypted),
+        webhook_set=business.telegram_webhook_set,
+        webhook_url=telegram_webhook_url(business),
+        telegram_webhook_secret_exists=bool(business.telegram_webhook_secret),
+    )

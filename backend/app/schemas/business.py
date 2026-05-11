@@ -31,6 +31,17 @@ class BusinessUpdate(BaseModel):
     knowledge_file_name: str | None = None
 
 
+class TelegramTokenUpdate(BaseModel):
+    telegram_bot_token: str
+
+
+class TelegramTokenStatus(BaseModel):
+    has_token: bool
+    webhook_set: bool
+    webhook_url: str | None
+    telegram_webhook_secret_exists: bool
+
+
 class BusinessRead(BusinessBase):
     model_config = ConfigDict(from_attributes=True)
 

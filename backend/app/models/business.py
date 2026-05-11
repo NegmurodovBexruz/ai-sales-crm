@@ -24,6 +24,9 @@ class Business(TimestampMixin, Base):
     business_knowledge_text: Mapped[str | None] = mapped_column(Text, nullable=True)
     knowledge_file_name: Mapped[str | None] = mapped_column(String(255), nullable=True)
     knowledge_uploaded_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    telegram_bot_token_encrypted: Mapped[str | None] = mapped_column(Text, nullable=True)
+    telegram_webhook_secret: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    telegram_webhook_set: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
 
     owner: Mapped["User"] = relationship(back_populates="businesses")

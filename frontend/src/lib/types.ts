@@ -53,6 +53,13 @@ export type BusinessMe = {
   pending_requests: BusinessMember[];
 };
 
+export type TelegramStatus = {
+  has_token: boolean;
+  webhook_set: boolean;
+  webhook_url?: string | null;
+  telegram_webhook_secret_exists: boolean;
+};
+
 export type MemberList = {
   business_public_id: string;
   members: BusinessMember[];
